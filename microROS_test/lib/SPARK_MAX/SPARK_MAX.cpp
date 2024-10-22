@@ -60,7 +60,7 @@ void SPARK_MAX::update_status_2(float position){
 ** Function name:           set_status_frame_period
 ** Descriptions:            Function to set period for SPARK MAX status frames
 *********************************************************************************************************/
-uint8_t SPARK_MAX::set_status_frame_period(const status_frame_id frame, const uint16_t period, MCP_CAN &CAN0){
+uint8_t SPARK_MAX::set_status_frame_period(const SPARK_MAX_status_frame_id frame, const uint16_t period, MCP_CAN &CAN0){
   // Delay to ensure there is an available transmit buffer
   delay(50);
   uint8_t frame_data[STATUS_DLC];

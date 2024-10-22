@@ -133,7 +133,7 @@ private:
     control_mode current_mode;
     can_frame current_control_frame = empty_frame; // Used to store the most recent control frame
     bool active = false;
-    SPARK_MAX_status status = empty_status;
+    SPARK_MAX_status status = empty_spark_max_status;
 
     u_int16_t period0, period1, period2, period3, period4;
 
@@ -149,7 +149,7 @@ private:
     static constexpr uint8_t STATUS_DLC = 2;
     static constexpr uint8_t STATUS_WRITE_SIZE = 2; // Size (bytes) of actual data written into the Data Window
 
-    uint8_t set_status_frame_period(const status_frame_id frame, const uint16_t period, MCP_CAN &CAN0); // Set period for SPARK MAX status frames
+    uint8_t set_status_frame_period(const SPARK_MAX_status_frame_id frame, const uint16_t period, MCP_CAN &CAN0); // Set period for SPARK MAX status frames
 
     void set_all_status_frame_periods(MCP_CAN &CAN0, u_int16_t period0, u_int16_t period1, u_int16_t period2, u_int16_t period3, u_int16_t period4);
 
