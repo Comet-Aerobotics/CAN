@@ -10,8 +10,8 @@
 #ifndef COMET_CAN_HELPER_H
 #define COMET_CAN_HELPER_H
 #define NO_ACTIVE_CAN_DEVICES -1
-// There should be no FRC devices with a device id equal to 0!
-#define NO_MATCHING_FRC_DEVICE_ID -1
+// unsigned int 0-255, FRC only uses 0-64
+#define NO_MATCHING_FRC_DEVICE_ID 255 
 
 #include <Arduino.h>
 #include <mcp_can.h>
