@@ -6,6 +6,7 @@
 
 ---- Define explicit error codes for adding devices to arr and other functions
 */
+//
 
 #ifndef PDP_H
 #define PDP_H
@@ -56,19 +57,21 @@ public:
 
     void parse_CAN_frame(u_int32_t rxId, u_int8_t len, u_int8_t *rxBuf) override{
         // Handle data parsing for specific frames
-        if ((rxId & FRC_dev_id_mask) == STATUS_1) {
+        if ((rxId & FRC_dev_id_mask) == Status1) {
           parse_status_frame_1(rxBuf, len);
-        } else if ((rxId & FRC_dev_id_mask) == STATUS_2) {
+        } else if ((rxId & FRC_dev_id_mask) == Status2) {
           parse_status_frame_2(rxBuf, len);
-        } else if ((rxId & FRC_dev_id_mask) == STATUS_3) {
+        } else if ((rxId & FRC_dev_id_mask) == Status3) {
           parse_status_frame_3(rxBuf, len);
+        } else if ((rxId & FRC_dev_id_mask) == StatusEnergy){
+          parse_energy_status(rxBuf, len);
         }
         
         
         // Add more cases if necessary
     }
 
-    PDP_status2 get_status(){
+    PDP_status get_status(){
         return status;
     }
 
@@ -82,7 +85,8 @@ public:
         return "Device id: " + String(get_device_id()) + 
                 "\nTemperature: " + String(status.temperature) +
                 currents + String(status.currents[15]) + "}" +
-                "\nTotal Current: " + String(totalCurrent + status.currents[15]);
+                "\nTotal Current: " + String(totalCurrent + status.currents[15]) + 
+                "\ninternalResBattery_mOhms: " + status.internalResBattery_mOhms;
     }
 
 
@@ -94,7 +98,7 @@ private:
     /*
     * Constants/variables
     */
-    PDP_status2 status = empty_pdp_status2;
+    PDP_status status = empty_pdp_status;
     bool active = false;
 
     const float kCurrentScalar = 0.125f;
@@ -102,6 +106,7 @@ private:
     void parse_status_frame_1(uint8_t *data, uint8_t size);   // Parse status frame 1
     void parse_status_frame_2(uint8_t *data, uint8_t size);   // Parse status frame 2
     void parse_status_frame_3(uint8_t *data, uint8_t size);   // Parse status frame 3
+    void parse_energy_status(uint8_t *data, uint8_t size);    // Parse energy status
 };
 
 #endif
