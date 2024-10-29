@@ -67,33 +67,48 @@ public:
 
     void parse_CAN_frame(u_int32_t rxId, u_int8_t len, u_int8_t *rxBuf) override{
         // Handle data parsing for specific frames
-        if ((rxId & FRC_dev_id_mask) == Status1) {
+        if ((rxId & FRC_dev_id_mask) == STATUS_1) {
           parse_status_frame_1(rxBuf, len);
-        } else if ((rxId & FRC_dev_id_mask) == Status2) {
+        } else if ((rxId & FRC_dev_id_mask) == STATUS_2) {
           parse_status_frame_2(rxBuf, len);
-        } else if ((rxId & FRC_dev_id_mask) == Status3) {
+        } else if ((rxId & FRC_dev_id_mask) == STATUS_3) {
           parse_status_frame_3(rxBuf, len);
+        } else if ((rxId & FRC_dev_id_mask) == STATUS_ENERGY) {
+          parse_energy_status(rxBuf, len);
         }
         
         
         // Add more cases if necessary
     }
+    // void update_status_0(float applied_output); // Updates the applied ouput
+    // void update_status_1(float velocity, float temperature, float voltage, float current); // Updates the Velocity, Temperature, Voltage, and Current
+    // void update_status_3(double voltage, double temperature){
+    //     status.voltage = voltage;
+    //     status.temperature = temperature;
+    // } // Updates the Position
 
     PDP_status get_status(){
         return status;
     }
 
     String to_string(){
+        // status.voltage = status.voltage+1.0;
         double totalCurrent = 0.0;
         String currents = "\nCurrents: {";
-        for (int i = 0; i < 15; i++){
+        for (int i = 0; i < 8; i++){
+            currents+=String(status.currents[i]) + ", ";
+            totalCurrent+=status.currents[i];
+        }
+        currents+="\n";
+        for (int i = 8; i < 16; i++){
             currents+=String(status.currents[i]) + ", ";
             totalCurrent+=status.currents[i];
         }
         return "Device id: " + String(get_device_id()) + 
-                "\nTemperature: " + String(status.temperature) +
-                currents + String(status.currents[15]) + "}" +
-                "\nTotal Current: " + String(totalCurrent + status.currents[15]);
+                "\nVoltage: " + String(status.voltage) + 
+                " Temperature: " + String(status.temperature) +
+                " Total Energy: " + String(status.totalEnergy) + 
+                currents + String(status.currents[15]) + "}";
     }
 
     can_frame get_current_frame() const override {
@@ -122,6 +137,8 @@ private:
     void parse_status_frame_1(uint8_t *data, uint8_t size);   // Parse status frame 1
     void parse_status_frame_2(uint8_t *data, uint8_t size);   // Parse status frame 2
     void parse_status_frame_3(uint8_t *data, uint8_t size);   // Parse status frame 3
+    void parse_energy_status(uint8_t *data, uint8_t size);   // Parse status frame energy
+
 };
 
 #endif

@@ -15,8 +15,8 @@ String Comet_CAN_Helper::parse_CAN_frame(){
       // Issue is here 
       can_devices[device_index]->parse_CAN_frame(rxId, len, rxBuf);
     }
-    // Redo implementation using DLC to output Raw binary data bytes
     return "Read on device: " + String(device_index);
+    // Redo implementation using DLC to output Raw binary data bytes
   }
       
   return "Read Nothing";

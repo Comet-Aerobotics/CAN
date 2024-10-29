@@ -33,12 +33,15 @@ struct SPARK_MAX_status{
 * PDP status data structure
 */
 struct PDP_status{
-    float temperature;
-    float voltage;
-    u_int32_t currents[16];
-    // float internalResBattery_mOhms
+    double temperature;
+    double voltage;
+    double currents[16];
+    double internalResBattery_mOhms;
+    double totalEnergy;
+    double totalPower;
+
 };
-static PDP_status empty_pdp_status = {0.0, 0.0, {}};
+static PDP_status empty_pdp_status = {0.0, 0.0, {}, 0.0, 0.0, 0.0};
 static SPARK_MAX_status empty_spark_max_status = {0, 0.0, 0.0, 0, 0.0, 0.0};
 
 static can_frame empty_frame = {0, 0, 0, {0}}; // Set all members to 0
@@ -57,16 +60,13 @@ enum SPARK_MAX_status_frame_id {
 enum PDP_status_frame_id {
     STATUS_1 = 0x08041400, //Channels 0-5
     STATUS_2 = 0x08041440, //Channels 6-11
-    STATUS_3 = 0x08041480 //Channels 12-15
+    STATUS_3 = 0x08041480, //Channels 12-15
+    STATUS_ENERGY = 0x8041740, 
 };
 
-enum PDP_status_frame_id2 {
-    Status1 = 0x50, 
-    Status2 = 0x51, 
-    Status3 = 0x52,
-    StatusEnergy = 0x5D,
-    Control1 = 0x70
-};
+// enum PDP_status_frame_id2 {
+//     Control1 = 0x70
+// };
 /* encoder/decoders */
 union PdpStatus1 {
   uint8_t data[8];
