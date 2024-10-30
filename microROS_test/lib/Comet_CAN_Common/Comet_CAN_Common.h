@@ -33,15 +33,16 @@ struct SPARK_MAX_status{
 * PDP status data structure
 */
 struct PDP_status{
-    double temperature;
     double voltage;
-    double currents[16];
-    double internalResBattery_mOhms;
-    double totalEnergy;
+    double totalCurrent;
     double totalPower;
+    double totalEnergy;
+    double temperature;
+    double internalResBattery_mOhms;
+    double currents[16];
 
 };
-static PDP_status empty_pdp_status = {0.0, 0.0, {}, 0.0, 0.0, 0.0};
+static PDP_status empty_pdp_status = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, {}};
 static SPARK_MAX_status empty_spark_max_status = {0, 0.0, 0.0, 0, 0.0, 0.0};
 
 static can_frame empty_frame = {0, 0, 0, {0}}; // Set all members to 0

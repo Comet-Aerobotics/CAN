@@ -48,7 +48,7 @@ public:
             set_all_status_frame_periods(CAN0, period0, period1, period2, period3, period4);
             return CAN_OK;
         }
-        else{
+        else {
             return CAN_FAIL;
         }
 
@@ -95,8 +95,6 @@ public:
         } else if ((rxId & FRC_dev_id_mask) == status_2) {
           parse_status_frame_2(rxBuf, len);
         }
-        
-        
         // Add more cases if necessary
     }
 

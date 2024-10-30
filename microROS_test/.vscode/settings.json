@@ -62,5 +62,6 @@
         "thread": "cpp",
         "typeinfo": "cpp"
     },
-    "ros.distro": "humble"
+    "ros.distro": "humble",
+    "cmake.sourceDirectory": "/home/ros/Documents/CAN-CTRE-PDP/microROS_test/extra_packages/custom_messages"
 }

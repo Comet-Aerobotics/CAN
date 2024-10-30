@@ -56,7 +56,7 @@ custom_messages__msg__RobotStatusMessage robot_data;
 // Logger
 rcl_publisher_t logging_publisher;
 std_msgs__msg__String logger;
-char log_message[256];  // Adjust size as needed\
+char log_message[512];  // Adjust size as needed
 // Debugging
 char hearbeat_start_string[64];  // Adjust size as needed
 unsigned long int start_time;

@@ -41,7 +41,6 @@ void PDP::parse_status_frame_3(uint8_t * data, uint8_t size){
   status.currents[14] = 0.125 * ((static_cast<uint32_t>(data[2] >> (8-4)) << 6) | (data[3] & ((1 << 6) - 1)));
   status.currents[15] = 0.125 * ((static_cast<uint32_t>(data[3] >> (8-2)) << 8) | data[4]);
   status.internalResBattery_mOhms = data[5];
-  // update_status_3(data[6] * 0.05 + 4.0, data[7] * 1.85851506524 - 90.1416100873);
   status.voltage = data[6] * 0.05 + 4.0; /* 50mV per unit plus 4V. */
   status.temperature = data[7] * 1.85851506524 - 90.1416100873; //magic numbers, but(units are F)
 }
@@ -51,8 +50,8 @@ void PDP::parse_status_frame_3(uint8_t * data, uint8_t size){
 ** Descriptions:            Function to parse PDP Energy Status
 *********************************************************************************************************/
 void PDP::parse_energy_status(uint8_t * data, uint8_t size){
-  // status.totalCurrent = 0.125 * ((static_cast<uint32_t>(data[1]) << 4) | (data[2] & ((1 << 4) - 1))); /* 7.3 fixed pt value in Amps */
-  // status.totalPower = 0.125 * ((static_cast<uint32_t>(data[2] >> (8-4)) << 8) | data[3]);  /* 7.3 fixed pt value in Watts */
+  status.totalCurrent = 0.125 * ((static_cast<uint32_t>(data[1]) << 4) | (data[2] & ((1 << 4) - 1))); /* 7.3 fixed pt value in Amps */
+  status.totalPower = 0.125 * ((static_cast<uint32_t>(data[2] >> (8-4)) << 8) | data[3]);  /* 7.3 fixed pt value in Watts */
   uint32_t tempEnergy;
   tempEnergy = static_cast<uint32_t>(data[4] >> (8-4));
   tempEnergy <<=8;

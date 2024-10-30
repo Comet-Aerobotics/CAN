@@ -4,7 +4,7 @@
 ---- TODO
 ~~~~ IDEA
 
----- Define explicit error codes for adding devices to arr and other functions
+---- Add way to send PDP messages (clear sticky faults)
 */
 
 #ifndef WPILIB_PDP_H
@@ -19,7 +19,7 @@
 
 /*********************************************************************************************************
 ** PDP class
-** For configuring and controlling SPARK MAXs
+** For reading data from the PDP
 *********************************************************************************************************/
 class PDP : public ICAN_Device {
 public:
@@ -27,8 +27,7 @@ public:
     * Constructor. MUST BE CALLED AFTER THE CAN MODULE HAS BEEN SETUP
     */
    
-    PDP(uint8_t device_id) : device_id(device_id){
-    }
+    PDP(uint8_t device_id) : device_id(device_id){}
 
     byte initialize_PDP(Comet_CAN_Helper &CAN_Helper,  MCP_CAN &CAN0){
         current_control_frame = empty_frame;
@@ -80,12 +79,6 @@ public:
         
         // Add more cases if necessary
     }
-    // void update_status_0(float applied_output); // Updates the applied ouput
-    // void update_status_1(float velocity, float temperature, float voltage, float current); // Updates the Velocity, Temperature, Voltage, and Current
-    // void update_status_3(double voltage, double temperature){
-    //     status.voltage = voltage;
-    //     status.temperature = temperature;
-    // } // Updates the Position
 
     PDP_status get_status(){
         return status;
@@ -97,17 +90,18 @@ public:
         String currents = "\nCurrents: {";
         for (int i = 0; i < 8; i++){
             currents+=String(status.currents[i]) + ", ";
-            totalCurrent+=status.currents[i];
         }
         currents+="\n";
         for (int i = 8; i < 16; i++){
             currents+=String(status.currents[i]) + ", ";
-            totalCurrent+=status.currents[i];
         }
         return "Device id: " + String(get_device_id()) + 
-                "\nVoltage: " + String(status.voltage) + 
+                " Voltage: " + String(status.voltage) + 
+                " Total Current: " + String(status.totalCurrent) + 
+                " Power: " + String(status.totalPower) + 
+                " Energy: " + String(status.totalEnergy) + 
                 " Temperature: " + String(status.temperature) +
-                " Total Energy: " + String(status.totalEnergy) + 
+                " Internal Resistance: " + String(status.internalResBattery_mOhms) + 
                 currents + String(status.currents[15]) + "}";
     }
 
@@ -136,7 +130,7 @@ private:
 
     void parse_status_frame_1(uint8_t *data, uint8_t size);   // Parse status frame 1
     void parse_status_frame_2(uint8_t *data, uint8_t size);   // Parse status frame 2
-    void parse_status_frame_3(uint8_t *data, uint8_t size);   // Parse status frame 3
+    void parse_status_frame_3(uint8_t *data, uint8_t size);  // Parse status frame 3
     void parse_energy_status(uint8_t *data, uint8_t size);   // Parse status frame energy
 
 };
