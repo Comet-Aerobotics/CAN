@@ -57,6 +57,27 @@ enum SPARK_MAX_status_frame_id {
     status_3 = 0x20518C0,
     status_4 = 0x2051900
 };
+/*
+* SPARK MAX periodic status frames
+*/
+enum SPARK_MAX_PID_ID {
+    kP_0 = 13, 
+    kI_0 = 14, 
+    kD_0 = 15, 
+    kF_0 = 16, 
+    kP_1 = 21,
+    kI_1 = 22, 
+    kD_1 = 23, 
+    kF_1 = 24, 
+    kP_2 = 29, 
+    kI_2 = 30, 
+    kD_2 = 31, 
+    kF_2 = 32, 
+    kP_3 = 37, 
+    kI_3 = 38, 
+    kD_3 = 39, 
+    kF_3 = 40, 
+};
 
 enum PDP_status_frame_id {
     STATUS_1 = 0x08041400, //Channels 0-5

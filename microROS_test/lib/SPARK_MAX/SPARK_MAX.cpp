@@ -73,6 +73,7 @@ uint8_t SPARK_MAX::set_status_frame_period(const SPARK_MAX_status_frame_id frame
   }
 }
 
+
 /*********************************************************************************************************
 ** Function name:           set_all_status_frame_periods
 ** Descriptions:            Function to set all periods for SPARK MAX status frames 0->4
@@ -84,6 +85,48 @@ void SPARK_MAX::set_all_status_frame_periods(MCP_CAN &CAN0, u_int16_t period0, u
   set_status_frame_period(status_3, period3, CAN0);
   set_status_frame_period(status_4, period4, CAN0);
 }
+
+/*********************************************************************************************************
+** Function name:           set_float_parameter
+** Descriptions:            Function to set arbitrary float parameter
+*********************************************************************************************************/
+uint8_t SPARK_MAX::set_float_parameter(const SPARK_MAX_PID_ID ID, const float val, MCP_CAN &CAN0){
+  // Delay to ensure there is an available transmit buffer
+  delay(50);
+  uint32_t arbID = 0x205C000 | (static_cast<uint32_t> (ID) << 6) | device_id;
+  std::array<uint8_t, 8> frame_data = {};
+  memcpy(frame_data.data(), &val, sizeof(val)); //https://tttapa.github.io/Pages/Programming/Cpp/Practices/type-punning.html
+  frame_data[4] = 0x02;
+  if(CAN0.sendMsgBuf(arbID, CAN_EXTID, STATUS_DLC, frame_data.data()) == CAN_OK){
+    return CAN_OK;
+  } 
+  else {
+    return CAN_FAIL;
+  }
+}
+
+  void SPARK_MAX::set_kP(MCP_CAN &CAN0, const float val, const uint8_t slot){// Set P constant
+      static const std::array<SPARK_MAX_PID_ID, 4> params = {kP_0, kP_1, kP_2, kP_3};
+      int count = 0;
+      while (set_float_parameter(params[slot], val, CAN0) == CAN_FAIL && count < 3) count++; //Retry max of 3 times
+  }
+  
+  void SPARK_MAX::set_kI(MCP_CAN &CAN0, const float val, const uint8_t slot){// Set I constant
+      static const std::array<SPARK_MAX_PID_ID, 4> params = {kI_0, kI_1, kI_2, kI_3};
+      int count = 0;
+      while (set_float_parameter(params[slot], val, CAN0) == CAN_FAIL && count < 3) count++; //Retry max of 3 times
+  }
+  void SPARK_MAX::set_kD(MCP_CAN &CAN0, const float val, const uint8_t slot){// Set D constant
+      static const std::array<SPARK_MAX_PID_ID, 4> params = {kD_0, kD_1, kD_2, kD_3};
+      int count = 0;
+      while (set_float_parameter(params[slot], val, CAN0) == CAN_FAIL && count < 3) count++; //Retry max of 3 times
+  }
+
+  void SPARK_MAX::set_kF(MCP_CAN &CAN0, const float val, const uint8_t slot){// Set F constant
+      static const std::array<SPARK_MAX_PID_ID, 4> params = {kF_0, kF_1, kF_2, kF_3};
+      int count = 0;
+      while (set_float_parameter(params[slot], val, CAN0) == CAN_FAIL && count < 3) count++; //Retry max of 3 times
+  }
 
 /*********************************************************************************************************
 ** Function name:           data_to_float_32_bit

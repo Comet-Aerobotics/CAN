@@ -46,6 +46,10 @@ public:
 
         if (CAN_Helper.add_to_CAN_dev_arr(this) == CAN_OK){
             set_all_status_frame_periods(CAN0, period0, period1, period2, period3, period4);
+            set_kP(CAN0, 1.0);
+            set_kI(CAN0, 1.1, 1);
+            set_kD(CAN0, 1.2, 2);
+            set_kF(CAN0, 1.3, 3);
             return CAN_OK;
         }
         else {
@@ -103,6 +107,11 @@ public:
     void update_status_0(float applied_output); // Updates the applied ouput
     void update_status_1(float velocity, float temperature, float voltage, float current); // Updates the Velocity, Temperature, Voltage, and Current
     void update_status_2(float position); // Updates the Position
+    
+    void set_kP(MCP_CAN &CAN0, const float val, const uint8_t slot = 0);
+    void set_kI(MCP_CAN &CAN0, const float val, const uint8_t slot = 0);
+    void set_kD(MCP_CAN &CAN0, const float val, const uint8_t slot = 0);
+    void set_kF(MCP_CAN &CAN0, const float val, const uint8_t slot = 0);
 
     SPARK_MAX_status get_status(){
         return status;
@@ -148,7 +157,8 @@ private:
     static constexpr uint8_t STATUS_WRITE_SIZE = 2; // Size (bytes) of actual data written into the Data Window
 
     uint8_t set_status_frame_period(const SPARK_MAX_status_frame_id frame, const uint16_t period, MCP_CAN &CAN0); // Set period for SPARK MAX status frames
-
+    uint8_t set_float_parameter(const SPARK_MAX_PID_ID ID, const float val, MCP_CAN &CAN0);
+  
     void set_all_status_frame_periods(MCP_CAN &CAN0, u_int16_t period0, u_int16_t period1, u_int16_t period2, u_int16_t period3, u_int16_t period4);
 
     float data_to_float_32_bit(uint8_t *data, uint8_t size); // Converts four bytes (little-endian) to a IEEE floating point number
