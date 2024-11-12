@@ -1,0 +1,4 @@
+msg/RobotStatusMessage.idl
+msg/RobotStatusMessage.msg
+msg/SparkMaxMessage.idl
+msg/SparkMaxMessage.msg

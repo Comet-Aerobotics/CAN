@@ -1,6 +1,30 @@
 #include "SPARK_MAX.h"
 #include <Comet_CAN_Helper.h>
 
+#include <Arduino.h>
+#include <micro_ros_platformio.h>
+#include <stdio.h>
+#include <rcl/rcl.h>
+#include <rcl/error_handling.h>
+#include <rclc/rclc.h>
+#include <rclc/executor.h>
+#include <SPI.h>
+#include <mcp_can.h>
+
+
+#define LED 2  // Onboard LED
+
+/*
+ * Macros to check the return value of RCL functions and CAN setup.
+ */
+#define RCCHECK(fn) { rcl_ret_t temp_rc = fn; if((temp_rc != RCL_RET_OK)){error_loop2();}} //   Enters error loop and restarts
+#define RCSOFTCHECK(fn) { rcl_ret_t temp_rc = fn; if((temp_rc != RCL_RET_OK)){} } // Allows program to keep running after error
+/*unc
+ * Blink for 5 seconds then reboot
+ */
+
+
+
 /*********************************************************************************************************
 ** Function name:           set_control_frame
 ** Descriptions:            Function to command SPARK MAX ouput
@@ -28,6 +52,20 @@ uint8_t SPARK_MAX::set_control_frame(const control_mode mode, const float setpoi
 
   return -1;
 }
+void error_loop2(){
+  int delay_times = 50;
+  while(delay_times){
+    delay(100);
+    delay_times--;
+  }
+  ESP.restart();
+}
+void CANCHECK(byte fn) 
+{
+  byte err = fn; 
+  if((err != CAN_OK))
+  {error_loop2();}
+} //   Enters error loop and restarts
 
 /*********************************************************************************************************
 ** Function name:           update_status_0
@@ -97,6 +135,8 @@ uint8_t SPARK_MAX::set_float_parameter(const SPARK_MAX_PID_ID ID, const float va
   std::array<uint8_t, 8> frame_data = {};
   memcpy(frame_data.data(), &val, sizeof(val)); //https://tttapa.github.io/Pages/Programming/Cpp/Practices/type-punning.html
   frame_data[4] = 0x02;
+  Serial.println(String(frame_data[0]) + " " + String(frame_data[1]) + " " + String(frame_data[2]) + " " + String(frame_data[3]) + " " + String(frame_data[4]));
+  Serial.println(arbID);
   if(CAN0.sendMsgBuf(arbID, CAN_EXTID, STATUS_DLC, frame_data.data()) == CAN_OK){
     return CAN_OK;
   } 
@@ -109,6 +149,7 @@ uint8_t SPARK_MAX::set_float_parameter(const SPARK_MAX_PID_ID ID, const float va
       static const std::array<SPARK_MAX_PID_ID, 4> params = {kP_0, kP_1, kP_2, kP_3};
       int count = 0;
       while (set_float_parameter(params[slot], val, CAN0) == CAN_FAIL && count < 3) count++; //Retry max of 3 times
+      CANCHECK(set_float_parameter(params[slot], val, CAN0));
   }
   
   void SPARK_MAX::set_kI(MCP_CAN &CAN0, const float val, const uint8_t slot){// Set I constant

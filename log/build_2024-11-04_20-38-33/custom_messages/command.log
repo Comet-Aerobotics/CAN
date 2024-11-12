@@ -1,0 +1,2 @@
+Invoking command in '/home/ros/Documents/CAN-CTRE-PDP/build/custom_messages': /usr/bin/cmake /home/ros/Documents/CAN-CTRE-PDP/microROS_test/extra_packages/custom_messages -DCMAKE_INSTALL_PREFIX=/home/ros/Documents/CAN-CTRE-PDP/install/custom_messages
+Invoked command in '/home/ros/Documents/CAN-CTRE-PDP/build/custom_messages' returned '1': /usr/bin/cmake /home/ros/Documents/CAN-CTRE-PDP/microROS_test/extra_packages/custom_messages -DCMAKE_INSTALL_PREFIX=/home/ros/Documents/CAN-CTRE-PDP/install/custom_messages

@@ -1,0 +1,17 @@
+// generated from rosidl_adapter/resource/msg.idl.em
+// with input from custom_messages/msg/RobotStatusMessage.msg
+// generated code does not contain a copyright notice
+
+#include "custom_messages/msg/SparkMaxMessage.idl"
+
+module custom_messages {
+  module msg {
+    struct RobotStatusMessage {
+      boolean enabled;
+
+      custom_messages::msg::SparkMaxMessage left_drivebase;
+
+      custom_messages::msg::SparkMaxMessage right_drivebase;
+    };
+  };
+};
