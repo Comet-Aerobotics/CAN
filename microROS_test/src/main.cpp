@@ -195,6 +195,18 @@ void CAN_core_callback(rcl_timer_t * timer, int64_t last_call_time) {
       //log_logging(CAN_Helper.send_message().c_str());
       CAN_Helper.send_message();
 
+      std::array<uint8_t, 5> frame_data = {};
+      float val = 0.5;
+      memcpy(frame_data.data(), &val, sizeof(val)); //https://tttapa.github.io/Pages/Programming/Cpp/Practices/type-punning.html
+      frame_data[4] = 0x02;
+
+      uint32_t test_id = 0x205C000 | 0x0000000D << 6 | 0x0000000B;
+      uint8_t test_dlc = 5;
+      log_logging(String(test_dlc).c_str());
+      log_logging(String(test_id).c_str());
+      log_logging((String(frame_data[0]) + " " + String(frame_data[1]) + " " + String(frame_data[2]) + " " + String(frame_data[3]) + " " + String(frame_data[4])).c_str());
+      CAN0.sendMsgBuf(test_id, test_dlc, frame_data.data());
+
     }
     else{
       if (was_enabled){
