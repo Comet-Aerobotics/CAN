@@ -94,6 +94,9 @@ Comet_CAN_Helper CAN_Helper(CAN0, CAN0_INT);
 // To only send 1 disabled after an enable, because lack of heartbeat is also a disable.
 bool was_enabled = false; 
 
+//Testing
+
+
 /*
 * SPARK MAXs
 */
@@ -176,18 +179,31 @@ void CAN_core_callback(rcl_timer_t * timer, int64_t last_call_time) {
   if (timer != NULL) {
     if (enabled.data){
       was_enabled = true;
-
+      
       if(CAN_Helper.send_enabled_heartbeat() == CAN_OK){
         //log_logging("Heartbeat Sent Successfully");
       } else {
         //log_logging("Error Sending Heartbeat...!!!...");
       }
-
+      drive_base_left.set_control_frame(0.5);
       //log_logging(CAN_Helper.send_message().c_str());
       CAN_Helper.send_message();
 
       //log_logging(CAN_Helper.send_message().c_str());
       CAN_Helper.send_message();
+      /*
+      uint8_t frame_data[8] = {255, 255, 255, 255, 255, 255, 255, 255};
+      //float val = 0.5;
+      //create_data(frame_data, &val, 4, 5);
+      //frame_data[4] = 0x02;
+
+      uint32_t test_id = 0x2052C80 | 0x0000000B;
+      uint8_t test_dlc = 8;
+      
+      //log_logging(String(test_dlc).c_str());
+      //log_logging(String(test_id).c_str());
+      //log_logging((String(frame_data[0]) + " " + String(frame_data[1]) + " " + String(frame_data[2]) + " " + String(frame_data[3]) + " " + String(frame_data[4])).c_str());
+      CAN0.sendMsgBuf(test_id, test_dlc, frame_data);*/
 
     }
     else{

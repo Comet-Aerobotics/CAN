@@ -101,6 +101,7 @@ public:
     }
 
     uint8_t set_control_frame(const control_mode mode, const float setpoint); // Command SPARK MAX output
+uint8_t set_control_frame(const float setpoint); // Command SPARK MAX output
 
     void update_status_0(float applied_output); // Updates the applied ouput
     void update_status_1(float velocity, float temperature, float voltage, float current); // Updates the Velocity, Temperature, Voltage, and Current

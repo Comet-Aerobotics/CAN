@@ -30,6 +30,39 @@ uint8_t SPARK_MAX::set_control_frame(const control_mode mode, const float setpoi
 }
 
 /*********************************************************************************************************
+** Function name:           set_control_frame
+** Descriptions:            Function to command SPARK MAX ouput
+*********************************************************************************************************/
+uint8_t SPARK_MAX::set_control_frame(const float pid){
+    current_control_frame.dlc = 5;
+    current_control_frame.ext = 1;
+      uint32_t test_id = 0x205C000 | (0x0000000D << 6) | device_id;
+    current_control_frame.can_id = test_id;
+// float val = 0.5;
+      //create_data(frame_data, &val, 4, 5);
+      // frame_data[4] = 0x02;
+      // uint8_t test_dlc = 5;
+    uint8_t frame_data[5];
+    create_data(frame_data, &pid, 4, 5);
+    frame_data[4] = 0x02;
+    memcpy(current_control_frame.buf, frame_data, 5);
+    
+
+   /*
+      
+      
+
+      u
+      
+      //log_logging(String(test_dlc).c_str());
+      //log_logging(String(test_id).c_str());
+      //log_logging((String(frame_data[0]) + " " + String(frame_data[1]) + " " + String(frame_data[2]) + " " + String(frame_data[3]) + " " + String(frame_data[4])).c_str());
+      CAN0.sendMsgBuf(test_id, test_dlc, frame_data);*/
+
+  return -1;
+}
+
+/*********************************************************************************************************
 ** Function name:           update_status_0
 ** Descriptions:            Updates the applied ouput
 *********************************************************************************************************/
