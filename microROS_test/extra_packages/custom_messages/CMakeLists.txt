@@ -28,6 +28,7 @@ find_package(rosidl_default_generators REQUIRED)
 rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/SparkMaxMessage.msg"
   "msg/RobotStatusMessage.msg"
+  "srv/SparkPID.srv"
  )
 
 ament_package()

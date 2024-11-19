@@ -47,10 +47,6 @@ public:
 
         if (CAN_Helper.add_to_CAN_dev_arr(this) == CAN_OK){
             set_all_status_frame_periods(CAN0, period0, period1, period2, period3, period4);
-            set_kP(1.0);
-            set_kI(1.1, 1);
-            set_kD(1.2, 2);
-            set_kF(1.3, 3);
             return CAN_OK;
         }
         else {
