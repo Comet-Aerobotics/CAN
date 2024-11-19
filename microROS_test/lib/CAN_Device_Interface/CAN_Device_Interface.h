@@ -12,7 +12,7 @@ public:
 
     virtual uint8_t get_device_id() const = 0; // Specific to FRC devices, returns FRC device_id
 
-    virtual can_frame get_current_frame() const = 0; // Returns current desired CAN frame/instruction
+    virtual can_frame get_current_frame() = 0; // Returns current desired CAN frame/instruction
 
     virtual void clear_current_frame() = 0; // Clean up after a frame has been sent to the MCP2515 buffer
 

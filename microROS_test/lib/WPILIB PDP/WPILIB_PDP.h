@@ -105,7 +105,7 @@ public:
                 currents + String(status.currents[15]) + "}";
     }
 
-    can_frame get_current_frame() const override {
+    can_frame get_current_frame() override {
         return current_control_frame; 
     }
 

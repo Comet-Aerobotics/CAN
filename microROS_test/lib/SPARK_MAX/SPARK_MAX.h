@@ -12,6 +12,7 @@
 
 #include <Arduino.h>
 #include <mcp_can.h>
+#include <queue>
 
 #include "Comet_CAN_Common.h"
 #include "CAN_Device_Interface.h"
@@ -46,10 +47,10 @@ public:
 
         if (CAN_Helper.add_to_CAN_dev_arr(this) == CAN_OK){
             set_all_status_frame_periods(CAN0, period0, period1, period2, period3, period4);
-            set_kP(CAN0, 1.0);
-            set_kI(CAN0, 1.1, 1);
-            set_kD(CAN0, 1.2, 2);
-            set_kF(CAN0, 1.3, 3);
+            set_kP(1.0);
+            set_kI(1.1, 1);
+            set_kD(1.2, 2);
+            set_kF(1.3, 3);
             return CAN_OK;
         }
         else {
@@ -74,8 +75,13 @@ public:
         }
     }
 
-    can_frame get_current_frame() const override {
-        return current_control_frame; 
+    can_frame get_current_frame(){
+        if (pid_queue.empty()){
+            return current_control_frame; 
+        }
+        can_frame frame = pid_queue.front();
+        pid_queue.pop();
+        return frame;
     }
 
     void clear_current_frame() override {
@@ -108,10 +114,10 @@ public:
     void update_status_1(float velocity, float temperature, float voltage, float current); // Updates the Velocity, Temperature, Voltage, and Current
     void update_status_2(float position); // Updates the Position
     
-    void set_kP(MCP_CAN &CAN0, const float val, const uint8_t slot = 0);
-    void set_kI(MCP_CAN &CAN0, const float val, const uint8_t slot = 0);
-    void set_kD(MCP_CAN &CAN0, const float val, const uint8_t slot = 0);
-    void set_kF(MCP_CAN &CAN0, const float val, const uint8_t slot = 0);
+    void set_kP(const float val, const uint8_t slot = 0);
+    void set_kI(const float val, const uint8_t slot = 0);
+    void set_kD(const float val, const uint8_t slot = 0);
+    void set_kF(const float val, const uint8_t slot = 0);
 
     SPARK_MAX_status get_status(){
         return status;
@@ -131,7 +137,7 @@ public:
     // Default destructor
     ~SPARK_MAX(){
     }
-
+    
 private:
     /*
     * Constants/variables
@@ -139,6 +145,7 @@ private:
     const uint8_t device_id;
     control_mode current_mode;
     can_frame current_control_frame = empty_frame; // Used to store the most recent control frame
+    std::queue<can_frame> pid_queue; //stores PID frames
     bool active = false;
     SPARK_MAX_status status = empty_spark_max_status;
 
@@ -148,6 +155,8 @@ private:
     * Control Frame
     */
     static constexpr uint8_t CONTROL_DLC = 8;
+    static constexpr uint8_t PARAM_DLC = 5;
+    static constexpr uint8_t EXT_FLAG = 1;
     static constexpr uint8_t CONTROL_WRITE_SIZE = 4; // Size (bytes) of actual data written into the Data Window
 
     /*
@@ -157,7 +166,6 @@ private:
     static constexpr uint8_t STATUS_WRITE_SIZE = 2; // Size (bytes) of actual data written into the Data Window
 
     uint8_t set_status_frame_period(const SPARK_MAX_status_frame_id frame, const uint16_t period, MCP_CAN &CAN0); // Set period for SPARK MAX status frames
-    uint8_t set_float_parameter(const SPARK_MAX_PID_ID ID, const float val, MCP_CAN &CAN0);
   
     void set_all_status_frame_periods(MCP_CAN &CAN0, u_int16_t period0, u_int16_t period1, u_int16_t period2, u_int16_t period3, u_int16_t period4);
 
@@ -166,6 +174,8 @@ private:
     void parse_status_frame_0(uint8_t *data);                 // Parse status frame 0
     void parse_status_frame_1(uint8_t *data, uint8_t size);   // Parse status frame 1
     void parse_status_frame_2(uint8_t *data, uint8_t size);   // Parse status frame 2
+
+    void set_float_parameter(const SPARK_MAX_PID_ID ID, const float val);
 };
 
 #endif
