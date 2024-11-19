@@ -1,30 +1,6 @@
 #include "SPARK_MAX.h"
 #include <Comet_CAN_Helper.h>
 
-#include <Arduino.h>
-#include <micro_ros_platformio.h>
-#include <stdio.h>
-#include <rcl/rcl.h>
-#include <rcl/error_handling.h>
-#include <rclc/rclc.h>
-#include <rclc/executor.h>
-#include <SPI.h>
-#include <mcp_can.h>
-
-
-#define LED 2  // Onboard LED
-
-/*
- * Macros to check the return value of RCL functions and CAN setup.
- */
-#define RCCHECK(fn) { rcl_ret_t temp_rc = fn; if((temp_rc != RCL_RET_OK)){error_loop2();}} //   Enters error loop and restarts
-#define RCSOFTCHECK(fn) { rcl_ret_t temp_rc = fn; if((temp_rc != RCL_RET_OK)){} } // Allows program to keep running after error
-/*unc
- * Blink for 5 seconds then reboot
- */
-
-
-
 /*********************************************************************************************************
 ** Function name:           set_control_frame
 ** Descriptions:            Function to command SPARK MAX ouput
@@ -52,21 +28,6 @@ uint8_t SPARK_MAX::set_control_frame(const control_mode mode, const float setpoi
 
   return -1;
 }
-void error_loop2(){
-  int delay_times = 50;
-  while(delay_times){
-    delay(100);
-    delay_times--;
-  }
-  ESP.restart();
-}
-void CANCHECK(byte fn) 
-{
-  byte err = fn; 
-  if((err != CAN_OK))
-  {error_loop2();}
-} //   Enters error loop and restarts
-
 /*********************************************************************************************************
 ** Function name:           update_status_0
 ** Descriptions:            Updates the applied ouput
