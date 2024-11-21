@@ -3,6 +3,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/custom_messages__rosidl_generator_c.dir/rosidl_generator_c/custom_messages/msg/detail/robot_status_message__functions.c.o.d"
   "CMakeFiles/custom_messages__rosidl_generator_c.dir/rosidl_generator_c/custom_messages/msg/detail/spark_max_message__functions.c.o"
   "CMakeFiles/custom_messages__rosidl_generator_c.dir/rosidl_generator_c/custom_messages/msg/detail/spark_max_message__functions.c.o.d"
+  "CMakeFiles/custom_messages__rosidl_generator_c.dir/rosidl_generator_c/custom_messages/srv/detail/spark_pid__functions.c.o"
+  "CMakeFiles/custom_messages__rosidl_generator_c.dir/rosidl_generator_c/custom_messages/srv/detail/spark_pid__functions.c.o.d"
   "libcustom_messages__rosidl_generator_c.pdb"
   "libcustom_messages__rosidl_generator_c.so"
   "rosidl_generator_c/custom_messages/msg/detail/robot_status_message__functions.c"
@@ -15,6 +17,11 @@ file(REMOVE_RECURSE
   "rosidl_generator_c/custom_messages/msg/detail/spark_max_message__type_support.h"
   "rosidl_generator_c/custom_messages/msg/robot_status_message.h"
   "rosidl_generator_c/custom_messages/msg/spark_max_message.h"
+  "rosidl_generator_c/custom_messages/srv/detail/spark_pid__functions.c"
+  "rosidl_generator_c/custom_messages/srv/detail/spark_pid__functions.h"
+  "rosidl_generator_c/custom_messages/srv/detail/spark_pid__struct.h"
+  "rosidl_generator_c/custom_messages/srv/detail/spark_pid__type_support.h"
+  "rosidl_generator_c/custom_messages/srv/spark_pid.h"
 )
 
 # Per-language clean rules from dependency scanning.

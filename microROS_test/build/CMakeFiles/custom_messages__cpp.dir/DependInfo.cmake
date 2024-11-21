@@ -19,6 +19,10 @@ set(CMAKE_MULTIPLE_OUTPUT_PAIRS
   "/home/ros/Documents/CAN-CTRE-PDP/microROS_test/build/rosidl_generator_cpp/custom_messages/msg/detail/spark_max_message__struct.hpp" "/home/ros/Documents/CAN-CTRE-PDP/microROS_test/build/rosidl_generator_cpp/custom_messages/msg/spark_max_message.hpp"
   "/home/ros/Documents/CAN-CTRE-PDP/microROS_test/build/rosidl_generator_cpp/custom_messages/msg/detail/spark_max_message__traits.hpp" "/home/ros/Documents/CAN-CTRE-PDP/microROS_test/build/rosidl_generator_cpp/custom_messages/msg/spark_max_message.hpp"
   "/home/ros/Documents/CAN-CTRE-PDP/microROS_test/build/rosidl_generator_cpp/custom_messages/msg/robot_status_message.hpp" "/home/ros/Documents/CAN-CTRE-PDP/microROS_test/build/rosidl_generator_cpp/custom_messages/msg/spark_max_message.hpp"
+  "/home/ros/Documents/CAN-CTRE-PDP/microROS_test/build/rosidl_generator_cpp/custom_messages/srv/detail/spark_pid__builder.hpp" "/home/ros/Documents/CAN-CTRE-PDP/microROS_test/build/rosidl_generator_cpp/custom_messages/msg/spark_max_message.hpp"
+  "/home/ros/Documents/CAN-CTRE-PDP/microROS_test/build/rosidl_generator_cpp/custom_messages/srv/detail/spark_pid__struct.hpp" "/home/ros/Documents/CAN-CTRE-PDP/microROS_test/build/rosidl_generator_cpp/custom_messages/msg/spark_max_message.hpp"
+  "/home/ros/Documents/CAN-CTRE-PDP/microROS_test/build/rosidl_generator_cpp/custom_messages/srv/detail/spark_pid__traits.hpp" "/home/ros/Documents/CAN-CTRE-PDP/microROS_test/build/rosidl_generator_cpp/custom_messages/msg/spark_max_message.hpp"
+  "/home/ros/Documents/CAN-CTRE-PDP/microROS_test/build/rosidl_generator_cpp/custom_messages/srv/spark_pid.hpp" "/home/ros/Documents/CAN-CTRE-PDP/microROS_test/build/rosidl_generator_cpp/custom_messages/msg/spark_max_message.hpp"
   )
 
 

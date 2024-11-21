@@ -4,7 +4,8 @@
   "template_dir": "/opt/ros/humble/share/rosidl_typesupport_fastrtps_c/resource",
   "idl_tuples": [
     "/home/ros/Documents/CAN-CTRE-PDP/microROS_test/build/rosidl_adapter/custom_messages:msg/SparkMaxMessage.idl",
-    "/home/ros/Documents/CAN-CTRE-PDP/microROS_test/build/rosidl_adapter/custom_messages:msg/RobotStatusMessage.idl"
+    "/home/ros/Documents/CAN-CTRE-PDP/microROS_test/build/rosidl_adapter/custom_messages:msg/RobotStatusMessage.idl",
+    "/home/ros/Documents/CAN-CTRE-PDP/microROS_test/build/rosidl_adapter/custom_messages:srv/SparkPID.idl"
   ],
   "target_dependencies": [
     "/opt/ros/humble/lib/rosidl_typesupport_fastrtps_c/rosidl_typesupport_fastrtps_c",
@@ -16,6 +17,7 @@
     "/opt/ros/humble/share/rosidl_typesupport_fastrtps_c/resource/srv__rosidl_typesupport_fastrtps_c.h.em",
     "/opt/ros/humble/share/rosidl_typesupport_fastrtps_c/resource/srv__type_support_c.cpp.em",
     "/home/ros/Documents/CAN-CTRE-PDP/microROS_test/build/rosidl_adapter/custom_messages/msg/SparkMaxMessage.idl",
-    "/home/ros/Documents/CAN-CTRE-PDP/microROS_test/build/rosidl_adapter/custom_messages/msg/RobotStatusMessage.idl"
+    "/home/ros/Documents/CAN-CTRE-PDP/microROS_test/build/rosidl_adapter/custom_messages/msg/RobotStatusMessage.idl",
+    "/home/ros/Documents/CAN-CTRE-PDP/microROS_test/build/rosidl_adapter/custom_messages/srv/SparkPID.idl"
   ]
 }

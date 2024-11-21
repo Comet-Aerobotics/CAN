@@ -3,12 +3,16 @@ file(REMOVE_RECURSE
   "CMakeFiles/custom_messages__rosidl_typesupport_introspection_c.dir/rosidl_typesupport_introspection_c/custom_messages/msg/detail/robot_status_message__type_support.c.o.d"
   "CMakeFiles/custom_messages__rosidl_typesupport_introspection_c.dir/rosidl_typesupport_introspection_c/custom_messages/msg/detail/spark_max_message__type_support.c.o"
   "CMakeFiles/custom_messages__rosidl_typesupport_introspection_c.dir/rosidl_typesupport_introspection_c/custom_messages/msg/detail/spark_max_message__type_support.c.o.d"
+  "CMakeFiles/custom_messages__rosidl_typesupport_introspection_c.dir/rosidl_typesupport_introspection_c/custom_messages/srv/detail/spark_pid__type_support.c.o"
+  "CMakeFiles/custom_messages__rosidl_typesupport_introspection_c.dir/rosidl_typesupport_introspection_c/custom_messages/srv/detail/spark_pid__type_support.c.o.d"
   "libcustom_messages__rosidl_typesupport_introspection_c.pdb"
   "libcustom_messages__rosidl_typesupport_introspection_c.so"
   "rosidl_typesupport_introspection_c/custom_messages/msg/detail/robot_status_message__rosidl_typesupport_introspection_c.h"
   "rosidl_typesupport_introspection_c/custom_messages/msg/detail/robot_status_message__type_support.c"
   "rosidl_typesupport_introspection_c/custom_messages/msg/detail/spark_max_message__rosidl_typesupport_introspection_c.h"
   "rosidl_typesupport_introspection_c/custom_messages/msg/detail/spark_max_message__type_support.c"
+  "rosidl_typesupport_introspection_c/custom_messages/srv/detail/spark_pid__rosidl_typesupport_introspection_c.h"
+  "rosidl_typesupport_introspection_c/custom_messages/srv/detail/spark_pid__type_support.c"
 )
 
 # Per-language clean rules from dependency scanning.

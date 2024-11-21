@@ -74,6 +74,10 @@ CMakeFiles/custom_messages__cpp: rosidl_generator_cpp/custom_messages/msg/robot_
 CMakeFiles/custom_messages__cpp: rosidl_generator_cpp/custom_messages/msg/detail/robot_status_message__builder.hpp
 CMakeFiles/custom_messages__cpp: rosidl_generator_cpp/custom_messages/msg/detail/robot_status_message__struct.hpp
 CMakeFiles/custom_messages__cpp: rosidl_generator_cpp/custom_messages/msg/detail/robot_status_message__traits.hpp
+CMakeFiles/custom_messages__cpp: rosidl_generator_cpp/custom_messages/srv/spark_pid.hpp
+CMakeFiles/custom_messages__cpp: rosidl_generator_cpp/custom_messages/srv/detail/spark_pid__builder.hpp
+CMakeFiles/custom_messages__cpp: rosidl_generator_cpp/custom_messages/srv/detail/spark_pid__struct.hpp
+CMakeFiles/custom_messages__cpp: rosidl_generator_cpp/custom_messages/srv/detail/spark_pid__traits.hpp
 
 rosidl_generator_cpp/custom_messages/msg/spark_max_message.hpp: /opt/ros/humble/lib/rosidl_generator_cpp/rosidl_generator_cpp
 rosidl_generator_cpp/custom_messages/msg/spark_max_message.hpp: /opt/ros/humble/local/lib/python3.10/dist-packages/rosidl_generator_cpp/__init__.py
@@ -92,6 +96,7 @@ rosidl_generator_cpp/custom_messages/msg/spark_max_message.hpp: /opt/ros/humble/
 rosidl_generator_cpp/custom_messages/msg/spark_max_message.hpp: /opt/ros/humble/share/rosidl_generator_cpp/resource/srv__traits.hpp.em
 rosidl_generator_cpp/custom_messages/msg/spark_max_message.hpp: rosidl_adapter/custom_messages/msg/SparkMaxMessage.idl
 rosidl_generator_cpp/custom_messages/msg/spark_max_message.hpp: rosidl_adapter/custom_messages/msg/RobotStatusMessage.idl
+rosidl_generator_cpp/custom_messages/msg/spark_max_message.hpp: rosidl_adapter/custom_messages/srv/SparkPID.idl
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/ros/Documents/CAN-CTRE-PDP/microROS_test/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Generating C++ code for ROS interfaces"
 	/usr/bin/python3 /opt/ros/humble/share/rosidl_generator_cpp/cmake/../../../lib/rosidl_generator_cpp/rosidl_generator_cpp --generator-arguments-file /home/ros/Documents/CAN-CTRE-PDP/microROS_test/build/rosidl_generator_cpp__arguments.json
 
@@ -116,6 +121,18 @@ rosidl_generator_cpp/custom_messages/msg/detail/robot_status_message__struct.hpp
 rosidl_generator_cpp/custom_messages/msg/detail/robot_status_message__traits.hpp: rosidl_generator_cpp/custom_messages/msg/spark_max_message.hpp
 	@$(CMAKE_COMMAND) -E touch_nocreate rosidl_generator_cpp/custom_messages/msg/detail/robot_status_message__traits.hpp
 
+rosidl_generator_cpp/custom_messages/srv/spark_pid.hpp: rosidl_generator_cpp/custom_messages/msg/spark_max_message.hpp
+	@$(CMAKE_COMMAND) -E touch_nocreate rosidl_generator_cpp/custom_messages/srv/spark_pid.hpp
+
+rosidl_generator_cpp/custom_messages/srv/detail/spark_pid__builder.hpp: rosidl_generator_cpp/custom_messages/msg/spark_max_message.hpp
+	@$(CMAKE_COMMAND) -E touch_nocreate rosidl_generator_cpp/custom_messages/srv/detail/spark_pid__builder.hpp
+
+rosidl_generator_cpp/custom_messages/srv/detail/spark_pid__struct.hpp: rosidl_generator_cpp/custom_messages/msg/spark_max_message.hpp
+	@$(CMAKE_COMMAND) -E touch_nocreate rosidl_generator_cpp/custom_messages/srv/detail/spark_pid__struct.hpp
+
+rosidl_generator_cpp/custom_messages/srv/detail/spark_pid__traits.hpp: rosidl_generator_cpp/custom_messages/msg/spark_max_message.hpp
+	@$(CMAKE_COMMAND) -E touch_nocreate rosidl_generator_cpp/custom_messages/srv/detail/spark_pid__traits.hpp
+
 custom_messages__cpp: CMakeFiles/custom_messages__cpp
 custom_messages__cpp: rosidl_generator_cpp/custom_messages/msg/detail/robot_status_message__builder.hpp
 custom_messages__cpp: rosidl_generator_cpp/custom_messages/msg/detail/robot_status_message__struct.hpp
@@ -125,6 +142,10 @@ custom_messages__cpp: rosidl_generator_cpp/custom_messages/msg/detail/spark_max_
 custom_messages__cpp: rosidl_generator_cpp/custom_messages/msg/detail/spark_max_message__traits.hpp
 custom_messages__cpp: rosidl_generator_cpp/custom_messages/msg/robot_status_message.hpp
 custom_messages__cpp: rosidl_generator_cpp/custom_messages/msg/spark_max_message.hpp
+custom_messages__cpp: rosidl_generator_cpp/custom_messages/srv/detail/spark_pid__builder.hpp
+custom_messages__cpp: rosidl_generator_cpp/custom_messages/srv/detail/spark_pid__struct.hpp
+custom_messages__cpp: rosidl_generator_cpp/custom_messages/srv/detail/spark_pid__traits.hpp
+custom_messages__cpp: rosidl_generator_cpp/custom_messages/srv/spark_pid.hpp
 custom_messages__cpp: CMakeFiles/custom_messages__cpp.dir/build.make
 .PHONY : custom_messages__cpp
 

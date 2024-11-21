@@ -1,0 +1,33 @@
+// generated from rosidl_adapter/resource/srv.idl.em
+// with input from custom_messages/srv/SparkPID.srv
+// generated code does not contain a copyright notice
+
+
+module custom_messages {
+  module srv {
+    module SparkPID_Request_Constants {
+      const uint8 KP = 13;
+      const uint8 KI = 14;
+      const uint8 KD = 15;
+      const uint8 KF = 16;
+    };
+    @verbatim (language="comment", text=
+      "Request Constants")
+    struct SparkPID_Request {
+      @verbatim (language="comment", text=
+        "Request Fields")
+      uint32 id;
+
+      uint8 type;
+
+      float setpoint;
+
+      uint8 slot;
+    };
+    @verbatim (language="comment", text=
+      "No Response")
+    struct SparkPID_Response {
+      uint8 structure_needs_at_least_one_member;
+    };
+  };
+};

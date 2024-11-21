@@ -1,0 +1,11 @@
+# Request Constants
+uint8 KP=13 
+uint8 KI=14 
+uint8 KD=15 
+uint8 KF=16
+
+# Request Fields
+uint32 id
+uint8 type
+float32 setpoint
+uint8 slot

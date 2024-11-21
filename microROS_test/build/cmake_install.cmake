@@ -364,11 +364,27 @@ if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/custom_messages/srv" TYPE FILE FILES "/home/ros/Documents/CAN-CTRE-PDP/microROS_test/build/rosidl_adapter/custom_messages/srv/SparkPID.idl")
+endif()
+
+if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
   file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/custom_messages/msg" TYPE FILE FILES "/home/ros/Documents/CAN-CTRE-PDP/microROS_test/extra_packages/custom_messages/msg/SparkMaxMessage.msg")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
   file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/custom_messages/msg" TYPE FILE FILES "/home/ros/Documents/CAN-CTRE-PDP/microROS_test/extra_packages/custom_messages/msg/RobotStatusMessage.msg")
+endif()
+
+if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/custom_messages/srv" TYPE FILE FILES "/home/ros/Documents/CAN-CTRE-PDP/microROS_test/extra_packages/custom_messages/srv/SparkPID.srv")
+endif()
+
+if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/custom_messages/srv" TYPE FILE FILES "/home/ros/Documents/CAN-CTRE-PDP/microROS_test/build/rosidl_cmake/srv/SparkPID_Request.msg")
+endif()
+
+if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/custom_messages/srv" TYPE FILE FILES "/home/ros/Documents/CAN-CTRE-PDP/microROS_test/build/rosidl_cmake/srv/SparkPID_Response.msg")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)

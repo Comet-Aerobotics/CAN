@@ -14,6 +14,7 @@
 ---- look into sending more then 3 message duing CAN Core loop
 ---- Test without mutexs in Spark Max class. p sure the rclc executor is single threaded.
 ---- Change CAN device interface to include a get_is_enabled function so that if it is not being used the CAN core can skip it
+---- Find safer solution for arbitrary IDs in SparkMax PID callback
 */
 
 #include <Arduino.h>
@@ -30,17 +31,18 @@
 #include <mcp_can.h>
 #include <custom_messages/msg/spark_max_message.h>
 #include <custom_messages/msg/robot_status_message.h>
+#include <custom_messages/srv/spark_pid.h>
 #include "Comet_CAN_Helper.h"
 #include "SPARK_MAX.h"
 #include "Comet_CAN_Common.h"
 #include "WPILIB_PDP.h"
-
 /*
  * Function Prototypes
  */
 void setup_timers();
 void setup_publishers();
 void setup_subscribers();
+void setup_services();
 void setup_executor();
 void initialize_vars();
 void setup_CAN();
@@ -53,6 +55,9 @@ void update_robot_data_from_Spark_Max(SPARK_MAX *spark_max);
  */
 rcl_publisher_t robot_data_publisher;
 custom_messages__msg__RobotStatusMessage robot_data;
+//Services
+custom_messages__srv__SparkPID_Response pidRes;
+custom_messages__srv__SparkPID_Request pidReq;
 // Logger
 rcl_publisher_t logging_publisher;
 std_msgs__msg__String logger;
@@ -77,6 +82,7 @@ rclc_executor_t executor;
 rclc_support_t support;
 rcl_allocator_t allocator;
 rcl_node_t node;
+rcl_service_t service;
 const char * microros_ns = "";
 
 /*
@@ -195,18 +201,6 @@ void CAN_core_callback(rcl_timer_t * timer, int64_t last_call_time) {
       //log_logging(CAN_Helper.send_message().c_str());
       CAN_Helper.send_message();
 
-      std::array<uint8_t, 5> frame_data = {};
-      float val = 0.5;
-      memcpy(frame_data.data(), &val, sizeof(val)); //https://tttapa.github.io/Pages/Programming/Cpp/Practices/type-punning.html
-      frame_data[4] = 0x02;
-
-      uint32_t test_id = 0x205C000 | 0x0000000D << 6 | 0x0000000B;
-      uint8_t test_dlc = 5;
-      log_logging(String(test_dlc).c_str());
-      log_logging(String(test_id).c_str());
-      log_logging((String(frame_data[0]) + " " + String(frame_data[1]) + " " + String(frame_data[2]) + " " + String(frame_data[3]) + " " + String(frame_data[4])).c_str());
-      CAN0.sendMsgBuf(test_id, test_dlc, frame_data.data());
-
     }
     else{
       if (was_enabled){
@@ -299,10 +293,20 @@ void enabled_callback(const void * msgin){
   }
 }
 
+void pid_callback(const void * req, void * res){
+  custom_messages__srv__SparkPID_Request * req_in = (custom_messages__srv__SparkPID_Request *) req;
+  custom_messages__srv__SparkPID_Response * res_in = (custom_messages__srv__SparkPID_Response *) res;
+  if (req_in->id >= 0 && req_in->id <= MAX_CAN_DEVICES){
+    SPARK_MAX *m_sMax = static_cast<SPARK_MAX*> (CAN_Helper.can_devices[req_in->id]); //this will throw a runtime error if not a SMAX
+    m_sMax->set_float_parameter(static_cast<SPARK_MAX_PID_ID> (req_in->type+8*req_in->slot), req_in->setpoint);//the IDs have an offset of 8 per slot
+  }
+}
+
 /*
  * Setup function to initialize components
  */
 void setup() {
+  
   // Configure serial transport
   Serial.begin(115200);
   set_microros_serial_transports(Serial);
@@ -323,6 +327,7 @@ void setup() {
   setup_timers();
   setup_publishers();
   setup_subscribers();
+  setup_services();
   setup_executor();
   
   initialize_vars();
@@ -401,6 +406,18 @@ void setup_subscribers(){
 }
 
 /*
+ * Setup services for various topics
+ */
+void setup_services(){
+  // Create a service for the Spark PID setter
+  RCCHECK(rclc_service_init_default(
+    &service, 
+    &node, 
+    ROSIDL_GET_SRV_TYPE_SUPPORT(custom_messages, srv, SparkPID),
+    "/SparkPID"));
+}
+
+/*
  * Setup executor with # of handles
  */
 void setup_executor(){
@@ -412,6 +429,8 @@ void setup_executor(){
   RCCHECK(rclc_executor_add_timer(&executor, &read_timer));
   RCCHECK(rclc_executor_add_subscription(&executor, &cmd_vel_subscriber, &cmd_vel, cmd_vel_callback, ON_NEW_DATA)); // or ALWAYS
   RCCHECK(rclc_executor_add_subscription(&executor, &enabled_subscriber, &enabled, enabled_callback, ALWAYS)); // or ALWAYS
+  RCCHECK(rclc_executor_add_service(&executor, &service, &pidReq, &pidRes, pid_callback));
+
 }
 
 /*

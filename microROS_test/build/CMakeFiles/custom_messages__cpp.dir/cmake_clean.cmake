@@ -8,6 +8,10 @@ file(REMOVE_RECURSE
   "rosidl_generator_cpp/custom_messages/msg/detail/spark_max_message__traits.hpp"
   "rosidl_generator_cpp/custom_messages/msg/robot_status_message.hpp"
   "rosidl_generator_cpp/custom_messages/msg/spark_max_message.hpp"
+  "rosidl_generator_cpp/custom_messages/srv/detail/spark_pid__builder.hpp"
+  "rosidl_generator_cpp/custom_messages/srv/detail/spark_pid__struct.hpp"
+  "rosidl_generator_cpp/custom_messages/srv/detail/spark_pid__traits.hpp"
+  "rosidl_generator_cpp/custom_messages/srv/spark_pid.hpp"
 )
 
 # Per-language clean rules from dependency scanning.

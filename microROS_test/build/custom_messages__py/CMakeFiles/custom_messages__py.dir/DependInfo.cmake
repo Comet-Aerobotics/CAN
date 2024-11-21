@@ -19,6 +19,9 @@ set(CMAKE_MULTIPLE_OUTPUT_PAIRS
   "/home/ros/Documents/CAN-CTRE-PDP/microROS_test/build/rosidl_generator_py/custom_messages/msg/_robot_status_message_s.c" "/home/ros/Documents/CAN-CTRE-PDP/microROS_test/build/rosidl_generator_py/custom_messages/_custom_messages_s.ep.rosidl_typesupport_fastrtps_c.c"
   "/home/ros/Documents/CAN-CTRE-PDP/microROS_test/build/rosidl_generator_py/custom_messages/msg/_spark_max_message.py" "/home/ros/Documents/CAN-CTRE-PDP/microROS_test/build/rosidl_generator_py/custom_messages/_custom_messages_s.ep.rosidl_typesupport_fastrtps_c.c"
   "/home/ros/Documents/CAN-CTRE-PDP/microROS_test/build/rosidl_generator_py/custom_messages/msg/_spark_max_message_s.c" "/home/ros/Documents/CAN-CTRE-PDP/microROS_test/build/rosidl_generator_py/custom_messages/_custom_messages_s.ep.rosidl_typesupport_fastrtps_c.c"
+  "/home/ros/Documents/CAN-CTRE-PDP/microROS_test/build/rosidl_generator_py/custom_messages/srv/__init__.py" "/home/ros/Documents/CAN-CTRE-PDP/microROS_test/build/rosidl_generator_py/custom_messages/_custom_messages_s.ep.rosidl_typesupport_fastrtps_c.c"
+  "/home/ros/Documents/CAN-CTRE-PDP/microROS_test/build/rosidl_generator_py/custom_messages/srv/_spark_pid.py" "/home/ros/Documents/CAN-CTRE-PDP/microROS_test/build/rosidl_generator_py/custom_messages/_custom_messages_s.ep.rosidl_typesupport_fastrtps_c.c"
+  "/home/ros/Documents/CAN-CTRE-PDP/microROS_test/build/rosidl_generator_py/custom_messages/srv/_spark_pid_s.c" "/home/ros/Documents/CAN-CTRE-PDP/microROS_test/build/rosidl_generator_py/custom_messages/_custom_messages_s.ep.rosidl_typesupport_fastrtps_c.c"
   )
 
 

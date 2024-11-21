@@ -71,9 +71,12 @@ custom_messages__py/CMakeFiles/custom_messages__py: rosidl_generator_py/custom_m
 custom_messages__py/CMakeFiles/custom_messages__py: rosidl_generator_py/custom_messages/_custom_messages_s.ep.rosidl_typesupport_c.c
 custom_messages__py/CMakeFiles/custom_messages__py: rosidl_generator_py/custom_messages/msg/_spark_max_message.py
 custom_messages__py/CMakeFiles/custom_messages__py: rosidl_generator_py/custom_messages/msg/_robot_status_message.py
+custom_messages__py/CMakeFiles/custom_messages__py: rosidl_generator_py/custom_messages/srv/_spark_pid.py
 custom_messages__py/CMakeFiles/custom_messages__py: rosidl_generator_py/custom_messages/msg/__init__.py
+custom_messages__py/CMakeFiles/custom_messages__py: rosidl_generator_py/custom_messages/srv/__init__.py
 custom_messages__py/CMakeFiles/custom_messages__py: rosidl_generator_py/custom_messages/msg/_spark_max_message_s.c
 custom_messages__py/CMakeFiles/custom_messages__py: rosidl_generator_py/custom_messages/msg/_robot_status_message_s.c
+custom_messages__py/CMakeFiles/custom_messages__py: rosidl_generator_py/custom_messages/srv/_spark_pid_s.c
 
 rosidl_generator_py/custom_messages/_custom_messages_s.ep.rosidl_typesupport_fastrtps_c.c: /opt/ros/humble/lib/rosidl_generator_py/rosidl_generator_py
 rosidl_generator_py/custom_messages/_custom_messages_s.ep.rosidl_typesupport_fastrtps_c.c: /opt/ros/humble/local/lib/python3.10/dist-packages/rosidl_generator_py/__init__.py
@@ -90,6 +93,7 @@ rosidl_generator_py/custom_messages/_custom_messages_s.ep.rosidl_typesupport_fas
 rosidl_generator_py/custom_messages/_custom_messages_s.ep.rosidl_typesupport_fastrtps_c.c: /opt/ros/humble/share/rosidl_generator_py/resource/_srv.py.em
 rosidl_generator_py/custom_messages/_custom_messages_s.ep.rosidl_typesupport_fastrtps_c.c: rosidl_adapter/custom_messages/msg/SparkMaxMessage.idl
 rosidl_generator_py/custom_messages/_custom_messages_s.ep.rosidl_typesupport_fastrtps_c.c: rosidl_adapter/custom_messages/msg/RobotStatusMessage.idl
+rosidl_generator_py/custom_messages/_custom_messages_s.ep.rosidl_typesupport_fastrtps_c.c: rosidl_adapter/custom_messages/srv/SparkPID.idl
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/ros/Documents/CAN-CTRE-PDP/microROS_test/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Generating Python code for ROS interfaces"
 	cd /home/ros/Documents/CAN-CTRE-PDP/microROS_test/build/custom_messages__py && /usr/bin/python3 /opt/ros/humble/share/rosidl_generator_py/cmake/../../../lib/rosidl_generator_py/rosidl_generator_py --generator-arguments-file /home/ros/Documents/CAN-CTRE-PDP/microROS_test/build/rosidl_generator_py__arguments.json --typesupport-impls "rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c;rosidl_typesupport_c"
 
@@ -105,14 +109,23 @@ rosidl_generator_py/custom_messages/msg/_spark_max_message.py: rosidl_generator_
 rosidl_generator_py/custom_messages/msg/_robot_status_message.py: rosidl_generator_py/custom_messages/_custom_messages_s.ep.rosidl_typesupport_fastrtps_c.c
 	@$(CMAKE_COMMAND) -E touch_nocreate rosidl_generator_py/custom_messages/msg/_robot_status_message.py
 
+rosidl_generator_py/custom_messages/srv/_spark_pid.py: rosidl_generator_py/custom_messages/_custom_messages_s.ep.rosidl_typesupport_fastrtps_c.c
+	@$(CMAKE_COMMAND) -E touch_nocreate rosidl_generator_py/custom_messages/srv/_spark_pid.py
+
 rosidl_generator_py/custom_messages/msg/__init__.py: rosidl_generator_py/custom_messages/_custom_messages_s.ep.rosidl_typesupport_fastrtps_c.c
 	@$(CMAKE_COMMAND) -E touch_nocreate rosidl_generator_py/custom_messages/msg/__init__.py
+
+rosidl_generator_py/custom_messages/srv/__init__.py: rosidl_generator_py/custom_messages/_custom_messages_s.ep.rosidl_typesupport_fastrtps_c.c
+	@$(CMAKE_COMMAND) -E touch_nocreate rosidl_generator_py/custom_messages/srv/__init__.py
 
 rosidl_generator_py/custom_messages/msg/_spark_max_message_s.c: rosidl_generator_py/custom_messages/_custom_messages_s.ep.rosidl_typesupport_fastrtps_c.c
 	@$(CMAKE_COMMAND) -E touch_nocreate rosidl_generator_py/custom_messages/msg/_spark_max_message_s.c
 
 rosidl_generator_py/custom_messages/msg/_robot_status_message_s.c: rosidl_generator_py/custom_messages/_custom_messages_s.ep.rosidl_typesupport_fastrtps_c.c
 	@$(CMAKE_COMMAND) -E touch_nocreate rosidl_generator_py/custom_messages/msg/_robot_status_message_s.c
+
+rosidl_generator_py/custom_messages/srv/_spark_pid_s.c: rosidl_generator_py/custom_messages/_custom_messages_s.ep.rosidl_typesupport_fastrtps_c.c
+	@$(CMAKE_COMMAND) -E touch_nocreate rosidl_generator_py/custom_messages/srv/_spark_pid_s.c
 
 custom_messages__py: custom_messages__py/CMakeFiles/custom_messages__py
 custom_messages__py: rosidl_generator_py/custom_messages/_custom_messages_s.ep.rosidl_typesupport_c.c
@@ -123,6 +136,9 @@ custom_messages__py: rosidl_generator_py/custom_messages/msg/_robot_status_messa
 custom_messages__py: rosidl_generator_py/custom_messages/msg/_robot_status_message_s.c
 custom_messages__py: rosidl_generator_py/custom_messages/msg/_spark_max_message.py
 custom_messages__py: rosidl_generator_py/custom_messages/msg/_spark_max_message_s.c
+custom_messages__py: rosidl_generator_py/custom_messages/srv/__init__.py
+custom_messages__py: rosidl_generator_py/custom_messages/srv/_spark_pid.py
+custom_messages__py: rosidl_generator_py/custom_messages/srv/_spark_pid_s.c
 custom_messages__py: custom_messages__py/CMakeFiles/custom_messages__py.dir/build.make
 .PHONY : custom_messages__py
 

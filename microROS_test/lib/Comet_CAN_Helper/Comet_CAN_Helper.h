@@ -50,6 +50,7 @@ public:
     // SHOULD ONLY BE CALLED IN SETUP() OR DURING DEVICE INITIALIZATION
     byte add_to_CAN_dev_arr(ICAN_Device *CAN_dev);        // Adds the Spark Max object to the list of Spark Maxs
     
+    ICAN_Device* can_devices[MAX_CAN_DEVICES]; // Array of pointers to CAN devices
 
 private:
     /*
@@ -57,7 +58,6 @@ private:
     */
     MCP_CAN &CAN0;
     const int CAN0_INT;
-    ICAN_Device* can_devices[MAX_CAN_DEVICES]; // Array of pointers to CAN devices
     uint8_t num_CAN_devs = 0;
     uint32_t selected_CAN_dev = 0;
     const uint32_t DEVICE_ID_MASK = FRC_dev_id_mask; // Mask everything but device ID bits (last 6). Follows FRC CAN Protocol

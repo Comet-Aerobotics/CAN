@@ -17,6 +17,9 @@
 #include "Comet_CAN_Common.h"
 #include "CAN_Device_Interface.h"
 #include "Comet_CAN_Helper.h"
+#include <custom_messages/srv/spark_pid.h>
+
+// #include "rclcpp/rclcpp.hpp"
 
 /*********************************************************************************************************
 ** SPARK_MAX class
@@ -115,6 +118,8 @@ public:
     void set_kD(const float val, const uint8_t slot = 0);
     void set_kF(const float val, const uint8_t slot = 0);
 
+    void set_float_parameter(const SPARK_MAX_PID_ID ID, const float val);
+
     SPARK_MAX_status get_status(){
         return status;
     }
@@ -171,7 +176,6 @@ private:
     void parse_status_frame_1(uint8_t *data, uint8_t size);   // Parse status frame 1
     void parse_status_frame_2(uint8_t *data, uint8_t size);   // Parse status frame 2
 
-    void set_float_parameter(const SPARK_MAX_PID_ID ID, const float val);
 };
 
 #endif

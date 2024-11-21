@@ -79,6 +79,7 @@ rosidl_typesupport_fastrtps_c/custom_messages/msg/detail/spark_max_message__rosi
 rosidl_typesupport_fastrtps_c/custom_messages/msg/detail/spark_max_message__rosidl_typesupport_fastrtps_c.h: /opt/ros/humble/share/rosidl_typesupport_fastrtps_c/resource/srv__type_support_c.cpp.em
 rosidl_typesupport_fastrtps_c/custom_messages/msg/detail/spark_max_message__rosidl_typesupport_fastrtps_c.h: rosidl_adapter/custom_messages/msg/SparkMaxMessage.idl
 rosidl_typesupport_fastrtps_c/custom_messages/msg/detail/spark_max_message__rosidl_typesupport_fastrtps_c.h: rosidl_adapter/custom_messages/msg/RobotStatusMessage.idl
+rosidl_typesupport_fastrtps_c/custom_messages/msg/detail/spark_max_message__rosidl_typesupport_fastrtps_c.h: rosidl_adapter/custom_messages/srv/SparkPID.idl
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/ros/Documents/CAN-CTRE-PDP/microROS_test/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Generating C type support for eProsima Fast-RTPS"
 	/usr/bin/python3 /opt/ros/humble/lib/rosidl_typesupport_fastrtps_c/rosidl_typesupport_fastrtps_c --generator-arguments-file /home/ros/Documents/CAN-CTRE-PDP/microROS_test/build/rosidl_typesupport_fastrtps_c__arguments.json
 
@@ -90,6 +91,12 @@ rosidl_typesupport_fastrtps_c/custom_messages/msg/detail/robot_status_message__r
 
 rosidl_typesupport_fastrtps_c/custom_messages/msg/detail/robot_status_message__type_support_c.cpp: rosidl_typesupport_fastrtps_c/custom_messages/msg/detail/spark_max_message__rosidl_typesupport_fastrtps_c.h
 	@$(CMAKE_COMMAND) -E touch_nocreate rosidl_typesupport_fastrtps_c/custom_messages/msg/detail/robot_status_message__type_support_c.cpp
+
+rosidl_typesupport_fastrtps_c/custom_messages/srv/detail/spark_pid__rosidl_typesupport_fastrtps_c.h: rosidl_typesupport_fastrtps_c/custom_messages/msg/detail/spark_max_message__rosidl_typesupport_fastrtps_c.h
+	@$(CMAKE_COMMAND) -E touch_nocreate rosidl_typesupport_fastrtps_c/custom_messages/srv/detail/spark_pid__rosidl_typesupport_fastrtps_c.h
+
+rosidl_typesupport_fastrtps_c/custom_messages/srv/detail/spark_pid__type_support_c.cpp: rosidl_typesupport_fastrtps_c/custom_messages/msg/detail/spark_max_message__rosidl_typesupport_fastrtps_c.h
+	@$(CMAKE_COMMAND) -E touch_nocreate rosidl_typesupport_fastrtps_c/custom_messages/srv/detail/spark_pid__type_support_c.cpp
 
 CMakeFiles/custom_messages__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/custom_messages/msg/detail/spark_max_message__type_support_c.cpp.o: CMakeFiles/custom_messages__rosidl_typesupport_fastrtps_c.dir/flags.make
 CMakeFiles/custom_messages__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/custom_messages/msg/detail/spark_max_message__type_support_c.cpp.o: rosidl_typesupport_fastrtps_c/custom_messages/msg/detail/spark_max_message__type_support_c.cpp
@@ -119,16 +126,32 @@ CMakeFiles/custom_messages__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/custom_messages__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/custom_messages/msg/detail/robot_status_message__type_support_c.cpp.s"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/ros/Documents/CAN-CTRE-PDP/microROS_test/build/rosidl_typesupport_fastrtps_c/custom_messages/msg/detail/robot_status_message__type_support_c.cpp -o CMakeFiles/custom_messages__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/custom_messages/msg/detail/robot_status_message__type_support_c.cpp.s
 
+CMakeFiles/custom_messages__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/custom_messages/srv/detail/spark_pid__type_support_c.cpp.o: CMakeFiles/custom_messages__rosidl_typesupport_fastrtps_c.dir/flags.make
+CMakeFiles/custom_messages__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/custom_messages/srv/detail/spark_pid__type_support_c.cpp.o: rosidl_typesupport_fastrtps_c/custom_messages/srv/detail/spark_pid__type_support_c.cpp
+CMakeFiles/custom_messages__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/custom_messages/srv/detail/spark_pid__type_support_c.cpp.o: CMakeFiles/custom_messages__rosidl_typesupport_fastrtps_c.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/ros/Documents/CAN-CTRE-PDP/microROS_test/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/custom_messages__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/custom_messages/srv/detail/spark_pid__type_support_c.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/custom_messages__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/custom_messages/srv/detail/spark_pid__type_support_c.cpp.o -MF CMakeFiles/custom_messages__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/custom_messages/srv/detail/spark_pid__type_support_c.cpp.o.d -o CMakeFiles/custom_messages__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/custom_messages/srv/detail/spark_pid__type_support_c.cpp.o -c /home/ros/Documents/CAN-CTRE-PDP/microROS_test/build/rosidl_typesupport_fastrtps_c/custom_messages/srv/detail/spark_pid__type_support_c.cpp
+
+CMakeFiles/custom_messages__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/custom_messages/srv/detail/spark_pid__type_support_c.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/custom_messages__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/custom_messages/srv/detail/spark_pid__type_support_c.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/ros/Documents/CAN-CTRE-PDP/microROS_test/build/rosidl_typesupport_fastrtps_c/custom_messages/srv/detail/spark_pid__type_support_c.cpp > CMakeFiles/custom_messages__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/custom_messages/srv/detail/spark_pid__type_support_c.cpp.i
+
+CMakeFiles/custom_messages__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/custom_messages/srv/detail/spark_pid__type_support_c.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/custom_messages__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/custom_messages/srv/detail/spark_pid__type_support_c.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/ros/Documents/CAN-CTRE-PDP/microROS_test/build/rosidl_typesupport_fastrtps_c/custom_messages/srv/detail/spark_pid__type_support_c.cpp -o CMakeFiles/custom_messages__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/custom_messages/srv/detail/spark_pid__type_support_c.cpp.s
+
 # Object files for target custom_messages__rosidl_typesupport_fastrtps_c
 custom_messages__rosidl_typesupport_fastrtps_c_OBJECTS = \
 "CMakeFiles/custom_messages__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/custom_messages/msg/detail/spark_max_message__type_support_c.cpp.o" \
-"CMakeFiles/custom_messages__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/custom_messages/msg/detail/robot_status_message__type_support_c.cpp.o"
+"CMakeFiles/custom_messages__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/custom_messages/msg/detail/robot_status_message__type_support_c.cpp.o" \
+"CMakeFiles/custom_messages__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/custom_messages/srv/detail/spark_pid__type_support_c.cpp.o"
 
 # External object files for target custom_messages__rosidl_typesupport_fastrtps_c
 custom_messages__rosidl_typesupport_fastrtps_c_EXTERNAL_OBJECTS =
 
 libcustom_messages__rosidl_typesupport_fastrtps_c.so: CMakeFiles/custom_messages__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/custom_messages/msg/detail/spark_max_message__type_support_c.cpp.o
 libcustom_messages__rosidl_typesupport_fastrtps_c.so: CMakeFiles/custom_messages__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/custom_messages/msg/detail/robot_status_message__type_support_c.cpp.o
+libcustom_messages__rosidl_typesupport_fastrtps_c.so: CMakeFiles/custom_messages__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/custom_messages/srv/detail/spark_pid__type_support_c.cpp.o
 libcustom_messages__rosidl_typesupport_fastrtps_c.so: CMakeFiles/custom_messages__rosidl_typesupport_fastrtps_c.dir/build.make
 libcustom_messages__rosidl_typesupport_fastrtps_c.so: /opt/ros/humble/lib/librosidl_typesupport_fastrtps_cpp.so
 libcustom_messages__rosidl_typesupport_fastrtps_c.so: /opt/ros/humble/lib/librosidl_typesupport_fastrtps_c.so
@@ -138,7 +161,7 @@ libcustom_messages__rosidl_typesupport_fastrtps_c.so: /opt/ros/humble/lib/librmw
 libcustom_messages__rosidl_typesupport_fastrtps_c.so: /opt/ros/humble/lib/librosidl_runtime_c.so
 libcustom_messages__rosidl_typesupport_fastrtps_c.so: /opt/ros/humble/lib/librcutils.so
 libcustom_messages__rosidl_typesupport_fastrtps_c.so: CMakeFiles/custom_messages__rosidl_typesupport_fastrtps_c.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/ros/Documents/CAN-CTRE-PDP/microROS_test/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Linking CXX shared library libcustom_messages__rosidl_typesupport_fastrtps_c.so"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/ros/Documents/CAN-CTRE-PDP/microROS_test/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Linking CXX shared library libcustom_messages__rosidl_typesupport_fastrtps_c.so"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/custom_messages__rosidl_typesupport_fastrtps_c.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
@@ -153,6 +176,8 @@ CMakeFiles/custom_messages__rosidl_typesupport_fastrtps_c.dir/depend: rosidl_typ
 CMakeFiles/custom_messages__rosidl_typesupport_fastrtps_c.dir/depend: rosidl_typesupport_fastrtps_c/custom_messages/msg/detail/robot_status_message__type_support_c.cpp
 CMakeFiles/custom_messages__rosidl_typesupport_fastrtps_c.dir/depend: rosidl_typesupport_fastrtps_c/custom_messages/msg/detail/spark_max_message__rosidl_typesupport_fastrtps_c.h
 CMakeFiles/custom_messages__rosidl_typesupport_fastrtps_c.dir/depend: rosidl_typesupport_fastrtps_c/custom_messages/msg/detail/spark_max_message__type_support_c.cpp
+CMakeFiles/custom_messages__rosidl_typesupport_fastrtps_c.dir/depend: rosidl_typesupport_fastrtps_c/custom_messages/srv/detail/spark_pid__rosidl_typesupport_fastrtps_c.h
+CMakeFiles/custom_messages__rosidl_typesupport_fastrtps_c.dir/depend: rosidl_typesupport_fastrtps_c/custom_messages/srv/detail/spark_pid__type_support_c.cpp
 	cd /home/ros/Documents/CAN-CTRE-PDP/microROS_test/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/ros/Documents/CAN-CTRE-PDP/microROS_test/extra_packages/custom_messages /home/ros/Documents/CAN-CTRE-PDP/microROS_test/extra_packages/custom_messages /home/ros/Documents/CAN-CTRE-PDP/microROS_test/build /home/ros/Documents/CAN-CTRE-PDP/microROS_test/build /home/ros/Documents/CAN-CTRE-PDP/microROS_test/build/CMakeFiles/custom_messages__rosidl_typesupport_fastrtps_c.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : CMakeFiles/custom_messages__rosidl_typesupport_fastrtps_c.dir/depend
 

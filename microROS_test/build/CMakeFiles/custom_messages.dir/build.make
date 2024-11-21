@@ -68,6 +68,9 @@ include CMakeFiles/custom_messages.dir/progress.make
 
 CMakeFiles/custom_messages: /home/ros/Documents/CAN-CTRE-PDP/microROS_test/extra_packages/custom_messages/msg/SparkMaxMessage.msg
 CMakeFiles/custom_messages: /home/ros/Documents/CAN-CTRE-PDP/microROS_test/extra_packages/custom_messages/msg/RobotStatusMessage.msg
+CMakeFiles/custom_messages: /home/ros/Documents/CAN-CTRE-PDP/microROS_test/extra_packages/custom_messages/srv/SparkPID.srv
+CMakeFiles/custom_messages: rosidl_cmake/srv/SparkPID_Request.msg
+CMakeFiles/custom_messages: rosidl_cmake/srv/SparkPID_Response.msg
 
 custom_messages: CMakeFiles/custom_messages
 custom_messages: CMakeFiles/custom_messages.dir/build.make

@@ -3,12 +3,16 @@ file(REMOVE_RECURSE
   "CMakeFiles/custom_messages__rosidl_typesupport_fastrtps_cpp.dir/rosidl_typesupport_fastrtps_cpp/custom_messages/msg/detail/dds_fastrtps/robot_status_message__type_support.cpp.o.d"
   "CMakeFiles/custom_messages__rosidl_typesupport_fastrtps_cpp.dir/rosidl_typesupport_fastrtps_cpp/custom_messages/msg/detail/dds_fastrtps/spark_max_message__type_support.cpp.o"
   "CMakeFiles/custom_messages__rosidl_typesupport_fastrtps_cpp.dir/rosidl_typesupport_fastrtps_cpp/custom_messages/msg/detail/dds_fastrtps/spark_max_message__type_support.cpp.o.d"
+  "CMakeFiles/custom_messages__rosidl_typesupport_fastrtps_cpp.dir/rosidl_typesupport_fastrtps_cpp/custom_messages/srv/detail/dds_fastrtps/spark_pid__type_support.cpp.o"
+  "CMakeFiles/custom_messages__rosidl_typesupport_fastrtps_cpp.dir/rosidl_typesupport_fastrtps_cpp/custom_messages/srv/detail/dds_fastrtps/spark_pid__type_support.cpp.o.d"
   "libcustom_messages__rosidl_typesupport_fastrtps_cpp.pdb"
   "libcustom_messages__rosidl_typesupport_fastrtps_cpp.so"
   "rosidl_typesupport_fastrtps_cpp/custom_messages/msg/detail/dds_fastrtps/robot_status_message__type_support.cpp"
   "rosidl_typesupport_fastrtps_cpp/custom_messages/msg/detail/dds_fastrtps/spark_max_message__type_support.cpp"
   "rosidl_typesupport_fastrtps_cpp/custom_messages/msg/detail/robot_status_message__rosidl_typesupport_fastrtps_cpp.hpp"
   "rosidl_typesupport_fastrtps_cpp/custom_messages/msg/detail/spark_max_message__rosidl_typesupport_fastrtps_cpp.hpp"
+  "rosidl_typesupport_fastrtps_cpp/custom_messages/srv/detail/dds_fastrtps/spark_pid__type_support.cpp"
+  "rosidl_typesupport_fastrtps_cpp/custom_messages/srv/detail/spark_pid__rosidl_typesupport_fastrtps_cpp.hpp"
 )
 
 # Per-language clean rules from dependency scanning.
