@@ -35,7 +35,7 @@
 #include "Comet_CAN_Helper.h"
 #include "SPARK_MAX.h"
 #include "Comet_CAN_Common.h"
-#include "WPILIB_PDP.h"
+#include "PDP.h"
 /*
  * Function Prototypes
  */

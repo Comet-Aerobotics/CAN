@@ -7,8 +7,8 @@
 ---- Add way to send PDP messages (clear sticky faults)
 */
 
-#ifndef WPILIB_PDP_H
-#define WPILIB_PDP_H
+#ifndef PDP_H
+#define PDP_H
 
 #include <Arduino.h>
 #include <mcp_can.h>
