@@ -279,10 +279,6 @@
 	"dependencies" : 
 	[
 		{
-			"backtrace" : 7,
-			"id" : "custom_messages__rosidl_generator_c::@6890427a1f51a3e7e1df"
-		},
-		{
 			"backtrace" : 13,
 			"id" : "custom_messages__rosidl_typesupport_introspection_c::@6890427a1f51a3e7e1df"
 		},
@@ -297,6 +293,10 @@
 		{
 			"backtrace" : 14,
 			"id" : "custom_messages__py::@1b1fefc62bafd3be0c03"
+		},
+		{
+			"backtrace" : 7,
+			"id" : "custom_messages__rosidl_generator_c::@6890427a1f51a3e7e1df"
 		}
 	],
 	"id" : "custom_messages__rosidl_typesupport_introspection_c__pyext::@6890427a1f51a3e7e1df",

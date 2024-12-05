@@ -25,11 +25,6 @@ endif()
 
 find_package(rosidl_default_generators REQUIRED)
 
-file(GLOB SOURCES "src/pid_client.cpp")
-
-add_executable(executable1 src/main.cpp lib/CAN_Device_Interface/CAN_Device_Interface.h lib/Comet_CAN_Common/Comet_CAN_Common.h lib/Comet_CAN_Helper/Comet_CAN_Helper.cpp lib/SPARK_MAX/SPARK_MAX.cpp lib/PDP/PDP.cpp)
-add_executable(executable2 pid_client.cpp )
-
 rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/SparkMaxMessage.msg"
   "msg/RobotStatusMessage.msg"
