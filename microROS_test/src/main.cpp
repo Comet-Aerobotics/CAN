@@ -84,6 +84,10 @@ const char * microros_ns = "";
 rcl_timer_t robot_status_timer;
 rcl_timer_t CAN_core_timer;
 rcl_timer_t read_timer;
+rcl_timer_t watchdog_timer;
+rcl_timer_t agent_watchdog_timer;
+rcutils_time_point_value_t last_cmd_time;
+const int WATCHDOG_TIMEOUT_NS = 150 *1000 *1000; // ms timeout for commands
 
 /*
  * CAN
@@ -123,6 +127,20 @@ void error_loop(){
     delay_times--;
   }
   ESP.restart();
+}
+
+/*
+* Agent Watchdog timer callback
+*/
+void agent_watchdog_cb(rcl_timer_t * timer, int64_t last_call_time)
+{
+  RCLC_UNUSED(last_call_time);  // Prevent unused variable warning
+  
+  if (timer != NULL) {
+    if (rmw_uros_ping_agent(1000, 1) != RMW_RET_OK){
+      error_loop();
+    }
+  }
 }
 
 /*
@@ -225,9 +243,13 @@ void cmd_vel_callback(const void * msgin) {
   const geometry_msgs__msg__Twist * msg = (const geometry_msgs__msg__Twist *)msgin;
 
   if (msg != NULL) {
+    // Update last command time
+    rcutils_system_time_now(&last_cmd_time);
+    enabled.data = true;
+
     // Process Twist
     geometry_msgs__msg__Twist input;
-    input.linear.x = msg->linear.x; // Up positive, down negative
+    input.linear.x = msg->linear.x * -1; // Up positive, down negative
     input.angular.z = msg->angular.z; // left positive, right negative
 
     // Normalize
@@ -267,6 +289,30 @@ void cmd_vel_callback(const void * msgin) {
     //log_logging(cmd_vel_string);
   }
   
+}
+
+/*
+* Watchdog timer callback
+*/
+void watchdog_cb(rcl_timer_t * timer, int64_t last_call_time)
+{
+  (void)timer; (void)last_call_time;
+  rcutils_time_point_value_t now;
+  rcutils_system_time_now(&now);
+  if ((now - last_cmd_time) > WATCHDOG_TIMEOUT_NS) {
+    // Timeout: send zero‐velocity and disable robot
+    enabled.data = false;
+    CAN_Helper.send_disabled_heartbeat() == CAN_OK;
+  }
+
+  // Check
+  /*
+  if (rmw_uros_ping_agent(1000, 1) == RMW_RET_OK){
+    log_logging("Agent Connected");
+  }
+  else{
+    log_logging("Agent Disconnected");
+  }*/
 }
 
 /*
@@ -342,6 +388,18 @@ void setup_timers(){
     &support,
     RCL_MS_TO_NS(25),
     read_callback));
+
+  RCCHECK(rclc_timer_init_default(
+    &watchdog_timer, 
+    &support, 
+    RCL_MS_TO_NS(50), 
+    watchdog_cb));
+
+    RCCHECK(rclc_timer_init_default(
+      &agent_watchdog_timer, 
+      &support, 
+      RCL_S_TO_NS(5), 
+      agent_watchdog_cb));
 }
 
 /*
@@ -390,6 +448,8 @@ void setup_executor(){
   // Order added defines execution hierarchy (FIFO)
   RCCHECK(rclc_executor_init(&executor, &support.context, 5, &allocator));
   RCCHECK(rclc_executor_add_timer(&executor, &CAN_core_timer));
+  RCCHECK(rclc_executor_add_timer(&executor, &watchdog_timer));
+  //RCCHECK(rclc_executor_add_timer(&executor, &agent_watchdog_timer));
   //RCCHECK(rclc_executor_add_timer(&executor, &robot_status_timer))
   //RCCHECK(rclc_executor_add_timer(&executor, &read_timer));
   RCCHECK(rclc_executor_add_subscription(&executor, &cmd_vel_subscriber, &cmd_vel, cmd_vel_callback, ON_NEW_DATA)); // or ALWAYS
