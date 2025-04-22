@@ -85,9 +85,10 @@ rcl_timer_t robot_status_timer;
 rcl_timer_t CAN_core_timer;
 rcl_timer_t read_timer;
 rcl_timer_t watchdog_timer;
-rcl_timer_t agent_watchdog_timer;
 rcutils_time_point_value_t last_cmd_time;
-const int WATCHDOG_TIMEOUT_NS = 150 *1000 *1000; // ms timeout for commands
+rcutils_time_point_value_t last_agent_time;
+const int WATCHDOG_TIMEOUT_NS = 150 *1000 *1000;
+const long long int AGENT_WATCHDOG_TIMEOUT_NS = 5LL * 1000 * 1000 * 1000;
 
 /*
  * CAN
@@ -129,19 +130,6 @@ void error_loop(){
   ESP.restart();
 }
 
-/*
-* Agent Watchdog timer callback
-*/
-void agent_watchdog_cb(rcl_timer_t * timer, int64_t last_call_time)
-{
-  RCLC_UNUSED(last_call_time);  // Prevent unused variable warning
-  
-  if (timer != NULL) {
-    if (rmw_uros_ping_agent(1000, 1) != RMW_RET_OK){
-      error_loop();
-    }
-  }
-}
 
 /*
  * Function to log messages to the logging topic
@@ -154,6 +142,7 @@ void log_logging(const char *msg) {
   logger.data.capacity = logger.data.size + 1;
   RCSOFTCHECK(rcl_publish(&logging_publisher, &logger, NULL));
 }
+
 
 /*
 * Updates a SPARK MAX message from a given SPARK MAX object
@@ -244,7 +233,7 @@ void cmd_vel_callback(const void * msgin) {
 
   if (msg != NULL) {
     // Update last command time
-    rcutils_system_time_now(&last_cmd_time);
+    if (rcutils_system_time_now(&last_cmd_time) == RCUTILS_RET_OK);
     enabled.data = true;
 
     // Process Twist
@@ -298,21 +287,20 @@ void watchdog_cb(rcl_timer_t * timer, int64_t last_call_time)
 {
   (void)timer; (void)last_call_time;
   rcutils_time_point_value_t now;
-  rcutils_system_time_now(&now);
+  if (rcutils_system_time_now(&now) == RCUTILS_RET_OK);
   if ((now - last_cmd_time) > WATCHDOG_TIMEOUT_NS) {
     // Timeout: send zero‐velocity and disable robot
     enabled.data = false;
     CAN_Helper.send_disabled_heartbeat() == CAN_OK;
   }
 
-  // Check
-  /*
-  if (rmw_uros_ping_agent(1000, 1) == RMW_RET_OK){
-    log_logging("Agent Connected");
+  if ((now - last_agent_time) > AGENT_WATCHDOG_TIMEOUT_NS){
+    if (rcutils_system_time_now(&last_agent_time) == RCUTILS_RET_OK);
+    
+    if (rmw_uros_ping_agent(1000, 2) != RMW_RET_OK){
+      error_loop();
+    }
   }
-  else{
-    log_logging("Agent Disconnected");
-  }*/
 }
 
 /*
@@ -394,12 +382,6 @@ void setup_timers(){
     &support, 
     RCL_MS_TO_NS(50), 
     watchdog_cb));
-
-    RCCHECK(rclc_timer_init_default(
-      &agent_watchdog_timer, 
-      &support, 
-      RCL_S_TO_NS(5), 
-      agent_watchdog_cb));
 }
 
 /*
@@ -449,7 +431,6 @@ void setup_executor(){
   RCCHECK(rclc_executor_init(&executor, &support.context, 5, &allocator));
   RCCHECK(rclc_executor_add_timer(&executor, &CAN_core_timer));
   RCCHECK(rclc_executor_add_timer(&executor, &watchdog_timer));
-  //RCCHECK(rclc_executor_add_timer(&executor, &agent_watchdog_timer));
   //RCCHECK(rclc_executor_add_timer(&executor, &robot_status_timer))
   //RCCHECK(rclc_executor_add_timer(&executor, &read_timer));
   RCCHECK(rclc_executor_add_subscription(&executor, &cmd_vel_subscriber, &cmd_vel, cmd_vel_callback, ON_NEW_DATA)); // or ALWAYS
@@ -498,6 +479,8 @@ void initialize_vars(){
 
 
   logger.data.size = 100;
-  enabled.data = true; // Change to false by default once web GUI has been built (ONLY FOR TESTING)
+  enabled.data = false; // Change to false by default once web GUI has been built (ONLY FOR TESTING)
   // may need to use something like std_msgs__msg__String__fini(&sub_msg); for messages that are arrays
+
+  if (rcutils_system_time_now(&last_agent_time) == RCUTILS_RET_OK);
 }
