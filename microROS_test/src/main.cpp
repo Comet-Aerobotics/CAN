@@ -102,8 +102,8 @@ bool was_enabled = false;
 /*
 * SPARK MAXs
 */
-SPARK_MAX drive_base_left = SPARK_MAX(11);
-SPARK_MAX drive_base_right = SPARK_MAX(10);
+SPARK_MAX drive_base_left = SPARK_MAX(10);
+SPARK_MAX drive_base_right = SPARK_MAX(11);
 
 /*
  * Other
@@ -238,7 +238,7 @@ void cmd_vel_callback(const void * msgin) {
 
     // Process Twist
     geometry_msgs__msg__Twist input;
-    input.linear.x = msg->linear.x * -1; // Up positive, down negative
+    input.linear.x = msg->linear.x; // Up positive, down negative
     input.angular.z = msg->angular.z; // left positive, right negative
 
     // Normalize
