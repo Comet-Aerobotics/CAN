@@ -255,20 +255,8 @@ void cmd_vel_callback(const void * msgin) {
     float left_output = 0.0;
     float right_output = 0.0;
 
-    // if x(+), and z(-)
-
-    if (input.linear.x > 0){
-      left_output = output2;
-      right_output = output1;
-    }
-    else if(input.linear.x < 0){
-      left_output = output1;
-      right_output = output2;
-    }
-    else{
-      left_output = output2;
-      right_output = output1;
-    }
+    left_output = output2;
+    right_output = output1;
 
     right_output = -right_output;
 
