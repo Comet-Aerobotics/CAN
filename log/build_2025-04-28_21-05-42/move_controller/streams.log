@@ -1,0 +1,24 @@
+[0.796s] Invoking command in '/home/ros/Documents/DEMO2/build/move_controller': PYTHONPATH=/home/ros/Documents/DEMO2/build/move_controller/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/ros/Documents/DEMO2/install/move_controller/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --editable --build-directory /home/ros/Documents/DEMO2/build/move_controller/build --no-deps symlink_data
+[0.946s] /home/ros/.local/lib/python3.10/site-packages/setuptools/_distutils/dist.py:270: UserWarning: Unknown distribution option: 'tests_require'
+[0.946s]   warnings.warn(msg)
+[1.080s] running develop
+[1.245s] running egg_info
+[1.258s] creating move_controller.egg-info
+[1.260s] writing move_controller.egg-info/PKG-INFO
+[1.260s] writing dependency_links to move_controller.egg-info/dependency_links.txt
+[1.260s] writing entry points to move_controller.egg-info/entry_points.txt
+[1.260s] writing requirements to move_controller.egg-info/requires.txt
+[1.260s] writing top-level names to move_controller.egg-info/top_level.txt
+[1.260s] writing manifest file 'move_controller.egg-info/SOURCES.txt'
+[1.284s] reading manifest file 'move_controller.egg-info/SOURCES.txt'
+[1.285s] writing manifest file 'move_controller.egg-info/SOURCES.txt'
+[1.298s] running build_ext
+[1.298s] Creating /home/ros/Documents/DEMO2/install/move_controller/lib/python3.10/site-packages/move-controller.egg-link (link to .)
+[1.299s] Installing move_controller script to /home/ros/Documents/DEMO2/install/move_controller/lib/move_controller
+[1.299s] 
+[1.299s] Installed /home/ros/Documents/DEMO2/build/move_controller
+[1.299s] running symlink_data
+[1.299s] creating /home/ros/Documents/DEMO2/install/move_controller/share/ament_index/resource_index/packages
+[1.299s] symbolically linking /home/ros/Documents/DEMO2/build/move_controller/resource/move_controller -> /home/ros/Documents/DEMO2/install/move_controller/share/ament_index/resource_index/packages
+[1.299s] symbolically linking /home/ros/Documents/DEMO2/build/move_controller/package.xml -> /home/ros/Documents/DEMO2/install/move_controller/share/move_controller
+[1.329s] Invoked command in '/home/ros/Documents/DEMO2/build/move_controller' returned '0': PYTHONPATH=/home/ros/Documents/DEMO2/build/move_controller/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/ros/Documents/DEMO2/install/move_controller/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --editable --build-directory /home/ros/Documents/DEMO2/build/move_controller/build --no-deps symlink_data

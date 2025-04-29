@@ -1,0 +1,19 @@
+[0.782s] Invoking command in '/home/ros/Documents/DEMO2/build/move_controller': PYTHONPATH=/home/ros/Documents/DEMO2/build/move_controller/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/ros/Documents/DEMO2/install/move_controller/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --editable --build-directory /home/ros/Documents/DEMO2/build/move_controller/build --no-deps symlink_data
+[0.915s] /home/ros/.local/lib/python3.10/site-packages/setuptools/_distutils/dist.py:270: UserWarning: Unknown distribution option: 'tests_require'
+[0.915s]   warnings.warn(msg)
+[1.046s] running develop
+[1.219s] running egg_info
+[1.231s] writing move_controller.egg-info/PKG-INFO
+[1.232s] writing dependency_links to move_controller.egg-info/dependency_links.txt
+[1.232s] writing entry points to move_controller.egg-info/entry_points.txt
+[1.233s] writing requirements to move_controller.egg-info/requires.txt
+[1.233s] writing top-level names to move_controller.egg-info/top_level.txt
+[1.257s] reading manifest file 'move_controller.egg-info/SOURCES.txt'
+[1.298s] writing manifest file 'move_controller.egg-info/SOURCES.txt'
+[1.312s] running build_ext
+[1.312s] Creating /home/ros/Documents/DEMO2/install/move_controller/lib/python3.10/site-packages/move-controller.egg-link (link to .)
+[1.312s] Installing move_controller script to /home/ros/Documents/DEMO2/install/move_controller/lib/move_controller
+[1.313s] 
+[1.313s] Installed /home/ros/Documents/DEMO2/build/move_controller
+[1.313s] running symlink_data
+[1.346s] Invoked command in '/home/ros/Documents/DEMO2/build/move_controller' returned '0': PYTHONPATH=/home/ros/Documents/DEMO2/build/move_controller/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/ros/Documents/DEMO2/install/move_controller/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --editable --build-directory /home/ros/Documents/DEMO2/build/move_controller/build --no-deps symlink_data

@@ -1,0 +1,42 @@
+[0.000000] (-) TimerEvent: {}
+[0.006192] (move_controller) JobQueued: {'identifier': 'move_controller', 'dependencies': OrderedDict()}
+[0.007921] (move_controller) JobStarted: {'identifier': 'move_controller'}
+[0.102211] (-) TimerEvent: {}
+[0.202934] (-) TimerEvent: {}
+[0.310119] (-) TimerEvent: {}
+[0.410564] (-) TimerEvent: {}
+[0.515811] (-) TimerEvent: {}
+[0.616552] (-) TimerEvent: {}
+[0.721549] (-) TimerEvent: {}
+[0.803015] (move_controller) Command: {'cmd': ['/usr/bin/python3', '-W', 'ignore:setup.py install is deprecated', '-W', 'ignore:easy_install command is deprecated', 'setup.py', 'develop', '--editable', '--build-directory', '/home/ros/Documents/DEMO2/build/move_controller/build', '--no-deps', 'symlink_data'], 'cwd': '/home/ros/Documents/DEMO2/build/move_controller', 'env': {'LESSOPEN': '| /usr/bin/lesspipe %s', 'USER': 'ros', 'XDG_SESSION_TYPE': 'wayland', 'SHLVL': '1', 'LD_LIBRARY_PATH': '/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/x86_64-linux-gnu:/opt/ros/humble/lib', 'HOME': '/home/ros', 'OLDPWD': '/home/ros/Documents/DEMO2/src', 'DESKTOP_SESSION': 'ubuntu', 'ROS_PYTHON_VERSION': '3', 'GNOME_SHELL_SESSION_MODE': 'ubuntu', 'GTK_MODULES': 'gail:atk-bridge', 'SYSTEMD_EXEC_PID': '1254', 'DBUS_SESSION_BUS_ADDRESS': 'unix:path=/run/user/1000/bus', 'COLORTERM': 'truecolor', 'IM_CONFIG_PHASE': '1', 'WAYLAND_DISPLAY': 'wayland-0', 'COLCON_PREFIX_PATH': '/home/ros/Documents/DEMO2/install', 'ROS_DISTRO': 'humble', 'LOGNAME': 'ros', '_': '/usr/bin/colcon', 'ROS_VERSION': '2', 'XDG_SESSION_CLASS': 'user', 'USERNAME': 'ros', 'TERM': 'xterm-256color', 'GNOME_DESKTOP_SESSION_ID': 'this-is-deprecated', 'ROS_LOCALHOST_ONLY': '0', 'PATH': '/opt/ros/humble/bin:/home/ros/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/snap/bin', 'SESSION_MANAGER': 'local/ros-VirtualBox:@/tmp/.ICE-unix/1226,unix/ros-VirtualBox:/tmp/.ICE-unix/1226', 'XDG_MENU_PREFIX': 'gnome-', 'GNOME_TERMINAL_SCREEN': '/org/gnome/Terminal/screen/a0c32178_2782_4ee7_8f1b_68c25802d426', 'GNOME_SETUP_DISPLAY': ':1', 'XDG_RUNTIME_DIR': '/run/user/1000', 'DISPLAY': ':0', 'LANG': 'en_US.UTF-8', 'XDG_CURRENT_DESKTOP': 'ubuntu:GNOME', 'XMODIFIERS': '@im=ibus', 'XDG_SESSION_DESKTOP': 'ubuntu', 'XAUTHORITY': '/run/user/1000/.mutter-Xwaylandauth.3HEZ52', 'LS_COLORS': 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:', 'GNOME_TERMINAL_SERVICE': ':1.130', 'SSH_AGENT_LAUNCHER': 'gnome-keyring', 'SSH_AUTH_SOCK': '/run/user/1000/keyring/ssh', 'AMENT_PREFIX_PATH': '/home/ros/Documents/DEMO2/install/move_controller:/opt/ros/humble', 'SHELL': '/bin/bash', 'QT_ACCESSIBILITY': '1', 'GDMSESSION': 'ubuntu', 'LESSCLOSE': '/usr/bin/lesspipe %s %s', 'QT_IM_MODULE': 'ibus', 'PWD': '/home/ros/Documents/DEMO2/build/move_controller', 'XDG_CONFIG_DIRS': '/etc/xdg/xdg-ubuntu:/etc/xdg', 'XDG_DATA_DIRS': '/usr/share/ubuntu:/usr/local/share/:/usr/share/:/var/lib/snapd/desktop', 'PYTHONPATH': '/home/ros/Documents/DEMO2/build/move_controller/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/ros/Documents/DEMO2/install/move_controller/lib/python3.10/site-packages:/home/ros/Documents/DEMO2/build/move_controller:/home/ros/Documents/DEMO2/install/move_controller/lib/python3.10/site-packages:/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages', 'COLCON': '1', 'VTE_VERSION': '6800'}, 'shell': False}
+[0.821741] (-) TimerEvent: {}
+[0.922160] (-) TimerEvent: {}
+[0.953330] (move_controller) StderrLine: {'line': b"/home/ros/.local/lib/python3.10/site-packages/setuptools/_distutils/dist.py:270: UserWarning: Unknown distribution option: 'tests_require'\n"}
+[0.953542] (move_controller) StderrLine: {'line': b'  warnings.warn(msg)\n'}
+[1.022484] (-) TimerEvent: {}
+[1.087979] (move_controller) StdoutLine: {'line': b'running develop\n'}
+[1.125811] (-) TimerEvent: {}
+[1.227815] (-) TimerEvent: {}
+[1.253290] (move_controller) StdoutLine: {'line': b'running egg_info\n'}
+[1.266008] (move_controller) StdoutLine: {'line': b'creating move_controller.egg-info\n'}
+[1.267890] (move_controller) StdoutLine: {'line': b'writing move_controller.egg-info/PKG-INFO\n'}
+[1.268009] (move_controller) StdoutLine: {'line': b'writing dependency_links to move_controller.egg-info/dependency_links.txt\n'}
+[1.268056] (move_controller) StdoutLine: {'line': b'writing entry points to move_controller.egg-info/entry_points.txt\n'}
+[1.268095] (move_controller) StdoutLine: {'line': b'writing requirements to move_controller.egg-info/requires.txt\n'}
+[1.268132] (move_controller) StdoutLine: {'line': b'writing top-level names to move_controller.egg-info/top_level.txt\n'}
+[1.268167] (move_controller) StdoutLine: {'line': b"writing manifest file 'move_controller.egg-info/SOURCES.txt'\n"}
+[1.291815] (move_controller) StdoutLine: {'line': b"reading manifest file 'move_controller.egg-info/SOURCES.txt'\n"}
+[1.292475] (move_controller) StdoutLine: {'line': b"writing manifest file 'move_controller.egg-info/SOURCES.txt'\n"}
+[1.305549] (move_controller) StdoutLine: {'line': b'running build_ext\n'}
+[1.305828] (move_controller) StdoutLine: {'line': b'Creating /home/ros/Documents/DEMO2/install/move_controller/lib/python3.10/site-packages/move-controller.egg-link (link to .)\n'}
+[1.306635] (move_controller) StdoutLine: {'line': b'Installing move_controller script to /home/ros/Documents/DEMO2/install/move_controller/lib/move_controller\n'}
+[1.306898] (move_controller) StdoutLine: {'line': b'\n'}
+[1.306961] (move_controller) StdoutLine: {'line': b'Installed /home/ros/Documents/DEMO2/build/move_controller\n'}
+[1.307003] (move_controller) StdoutLine: {'line': b'running symlink_data\n'}
+[1.307136] (move_controller) StdoutLine: {'line': b'creating /home/ros/Documents/DEMO2/install/move_controller/share/ament_index/resource_index/packages\n'}
+[1.307227] (move_controller) StdoutLine: {'line': b'symbolically linking /home/ros/Documents/DEMO2/build/move_controller/resource/move_controller -> /home/ros/Documents/DEMO2/install/move_controller/share/ament_index/resource_index/packages\n'}
+[1.307414] (move_controller) StdoutLine: {'line': b'symbolically linking /home/ros/Documents/DEMO2/build/move_controller/package.xml -> /home/ros/Documents/DEMO2/install/move_controller/share/move_controller\n'}
+[1.334045] (-) TimerEvent: {}
+[1.336610] (move_controller) CommandEnded: {'returncode': 0}
+[1.346440] (move_controller) JobEnded: {'identifier': 'move_controller', 'rc': 0}
+[1.347600] (-) EventReactorShutdown: {}
