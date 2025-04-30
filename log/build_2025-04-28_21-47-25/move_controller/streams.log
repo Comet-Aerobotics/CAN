@@ -1,0 +1,24 @@
+[2.711s] Invoking command in '/home/aerobotics/Downloads/CAN-AprilDemo/build/move_controller': PYTHONPATH=/home/aerobotics/Downloads/CAN-AprilDemo/build/move_controller/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/aerobotics/Downloads/CAN-AprilDemo/install/move_controller/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --editable --build-directory /home/aerobotics/Downloads/CAN-AprilDemo/build/move_controller/build --no-deps symlink_data
+[3.935s] running develop
+[4.678s] running egg_info
+[4.679s] creating move_controller.egg-info
+[4.679s] writing move_controller.egg-info/PKG-INFO
+[4.680s] writing dependency_links to move_controller.egg-info/dependency_links.txt
+[4.681s] writing entry points to move_controller.egg-info/entry_points.txt
+[4.681s] writing requirements to move_controller.egg-info/requires.txt
+[4.682s] writing top-level names to move_controller.egg-info/top_level.txt
+[4.682s] writing manifest file 'move_controller.egg-info/SOURCES.txt'
+[4.688s] reading manifest file 'move_controller.egg-info/SOURCES.txt'
+[4.691s] writing manifest file 'move_controller.egg-info/SOURCES.txt'
+[4.696s] running build_ext
+[4.697s] Creating /home/aerobotics/Downloads/CAN-AprilDemo/install/move_controller/lib/python3.10/site-packages/move-controller.egg-link (link to .)
+[4.700s] Installing move_controller script to /home/aerobotics/Downloads/CAN-AprilDemo/install/move_controller/lib/move_controller
+[4.701s] 
+[4.701s] Installed /home/aerobotics/Downloads/CAN-AprilDemo/build/move_controller
+[4.702s] running symlink_data
+[4.702s] creating /home/aerobotics/Downloads/CAN-AprilDemo/install/move_controller/share/ament_index
+[4.703s] creating /home/aerobotics/Downloads/CAN-AprilDemo/install/move_controller/share/ament_index/resource_index
+[4.703s] creating /home/aerobotics/Downloads/CAN-AprilDemo/install/move_controller/share/ament_index/resource_index/packages
+[4.703s] symbolically linking /home/aerobotics/Downloads/CAN-AprilDemo/build/move_controller/resource/move_controller -> /home/aerobotics/Downloads/CAN-AprilDemo/install/move_controller/share/ament_index/resource_index/packages
+[4.704s] symbolically linking /home/aerobotics/Downloads/CAN-AprilDemo/build/move_controller/package.xml -> /home/aerobotics/Downloads/CAN-AprilDemo/install/move_controller/share/move_controller
+[4.815s] Invoked command in '/home/aerobotics/Downloads/CAN-AprilDemo/build/move_controller' returned '0': PYTHONPATH=/home/aerobotics/Downloads/CAN-AprilDemo/build/move_controller/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/aerobotics/Downloads/CAN-AprilDemo/install/move_controller/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --editable --build-directory /home/aerobotics/Downloads/CAN-AprilDemo/build/move_controller/build --no-deps symlink_data
