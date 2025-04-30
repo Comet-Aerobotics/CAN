@@ -50,12 +50,12 @@ class MoveController(Node):
         delta_dist = realmsg.x
 
         # figure out rotation phase
-        self.rot_direction = math.copysign(1.0, delta_yaw) if abs(delta_yaw) > 1e-6 else 0.0
+        self.rot_direction = math.copysign(0.1, delta_yaw) if abs(delta_yaw) > 1e-6 else 0.0
         self.rot_duration  = abs(delta_yaw) / (self.max_ang_speed + 1e-6)
 
         # figure out translation phase
         self.move_direction =  if abs(delta_dist) > 1e-6 else 0.0
-        self.move_duration  = math.copysign(1.0, delta_dist)abs(delta_dist) / (self.max_lin_speed + 1e-6)
+        self.move_duration  = math.copysign(0.1, delta_dist)abs(delta_dist) / (self.max_lin_speed + 1e-6)
 
         # start the rotation phase
         self.phase_start = self.get_clock().now()
