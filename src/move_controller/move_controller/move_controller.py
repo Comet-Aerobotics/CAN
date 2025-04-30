@@ -2,16 +2,16 @@
 import rclpy
 import math
 from rclpy.node import Node
-from geometry_msgs.msg import Twist, Vector3
+from geometry_msgs.msg import Twist, Vector3Stamped
 
 class MoveController(Node):
     def __init__(self):
         super().__init__('move_controller_open_loop')
 
         # === MOTION SPECS (tune for your robot!) ===
-        self.wheel_radius    = 0.1    # [m]
-        self.track_width     = 0.5    # [m]
-        self.motor_max_rpm   = 60     # max wheel rpm
+        self.wheel_radius    = 0.0762   # [m]
+        self.track_width     = 0.635    # [m]
+        self.motor_max_rpm   = 10     # max wheel rpm
 
         # compute robot max speeds
         omega_wheel_max = self.motor_max_rpm * 2*math.pi / 60.0  
@@ -30,7 +30,7 @@ class MoveController(Node):
 
         # subscribe to polar readings
         self.create_subscription(
-            Vector3,
+            Vector3Stamped,
             '/apriltag_polar',
             self.apriltag_callback,
             10
@@ -41,21 +41,21 @@ class MoveController(Node):
 
         self.get_logger().info('Open-loop MoveController ready (capped output).')
 
-    def apriltag_callback(self, msg: Vector3):
+    def apriltag_callback(self, msg: Vector3Stamped):
         if self.state != 'IDLE':
             self.get_logger().info('Busy – ignoring new /apriltag_polar input')
             return
-
-        delta_yaw  = msg.y
-        delta_dist = msg.x
+        realmsg = msg.vector
+        delta_yaw  = realmsg.y
+        delta_dist = realmsg.x
 
         # figure out rotation phase
         self.rot_direction = math.copysign(1.0, delta_yaw) if abs(delta_yaw) > 1e-6 else 0.0
         self.rot_duration  = abs(delta_yaw) / (self.max_ang_speed + 1e-6)
 
         # figure out translation phase
-        self.move_direction = math.copysign(1.0, delta_dist) if abs(delta_dist) > 1e-6 else 0.0
-        self.move_duration  = abs(delta_dist) / (self.max_lin_speed + 1e-6)
+        self.move_direction =  if abs(delta_dist) > 1e-6 else 0.0
+        self.move_duration  = math.copysign(1.0, delta_dist)abs(delta_dist) / (self.max_lin_speed + 1e-6)
 
         # start the rotation phase
         self.phase_start = self.get_clock().now()
