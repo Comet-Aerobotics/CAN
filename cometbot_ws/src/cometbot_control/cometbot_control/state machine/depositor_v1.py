@@ -61,6 +61,8 @@ class DepositorNode(Node):
         self._has_space = True
 
         self._logged_once = set()
+        # quieter logging
+        self._last_announced_state = None
 
         self.get_logger().info('Depositor node started (move=%.1fs receive=%.1fs dump=%.1fs)' % (self.move_time, self.receive_time, self.dump_time))
 
@@ -70,27 +72,45 @@ class DepositorNode(Node):
         getattr(self.get_logger(), level)(msg)
         self._logged_once.add(msg)
 
+    # ---- control functions ----
+    def cmd_start(self):
+        self.get_logger().info('Command: depositor start')
+        if self.state in (DepositorState.IDLE, DepositorState.RETURNING):
+            self.transition_to(DepositorState.MOVING_TO_DUMP)
+
+    def cmd_receive(self):
+        self.get_logger().info('Command: depositor receive')
+        if self.state in (DepositorState.MOVING_TO_DUMP, DepositorState.IDLE) and self._has_space:
+            if self.state != DepositorState.MOVING_TO_DUMP:
+                self.transition_to(DepositorState.MOVING_TO_DUMP)
+            else:
+                self.transition_to(DepositorState.RECEIVING)
+
+    def cmd_dump(self):
+        self.get_logger().info('Command: depositor dump')
+        if self.state in (DepositorState.RECEIVING, DepositorState.MOVING_TO_DUMP, DepositorState.IDLE) and not self._has_space:
+            self.transition_to(DepositorState.DUMPING)
+
+    def cmd_return(self):
+        self.get_logger().info('Command: depositor return')
+        self.transition_to(DepositorState.RETURNING)
+
+    def cmd_stop(self):
+        self.get_logger().info('Command: depositor stop')
+        self.transition_to(DepositorState.STOPPED)
+
     def cmd_cb(self, msg: String):
         cmd = (msg.data or '').strip().lower()
         if cmd == 'start':
-            if self.state in (DepositorState.IDLE, DepositorState.RETURNING):
-                # begin moving to dump site
-                self.transition_to(DepositorState.MOVING_TO_DUMP)
+            self.cmd_start()
         elif cmd == 'receive':
-            # simulate receiving material from excavator
-            if self.state in (DepositorState.MOVING_TO_DUMP, DepositorState.IDLE) and self._has_space:
-                # if not at dump site yet, move there first
-                if self.state != DepositorState.MOVING_TO_DUMP:
-                    self.transition_to(DepositorState.MOVING_TO_DUMP)
-                else:
-                    self.transition_to(DepositorState.RECEIVING)
+            self.cmd_receive()
         elif cmd == 'dump':
-            if self.state in (DepositorState.RECEIVING, DepositorState.MOVING_TO_DUMP, DepositorState.IDLE) and not self._has_space:
-                self.transition_to(DepositorState.DUMPING)
+            self.cmd_dump()
         elif cmd == 'return':
-            self.transition_to(DepositorState.RETURNING)
+            self.cmd_return()
         elif cmd == 'stop':
-            self.transition_to(DepositorState.STOPPED)
+            self.cmd_stop()
         else:
             self.get_logger().warn(f'Unknown depositor command: "{cmd}"')
 
@@ -148,6 +168,10 @@ class DepositorNode(Node):
         elif self.state == DepositorState.STOPPED:
             self.log_once('Depositor stopped (manual)')
 
+        # quieter announce
+        if self._last_announced_state != self.state.name:
+            self.get_logger().info(f'Depositor state: {self.state.name}')
+            self._last_announced_state = self.state.name
         # publish state flags every loop
         self.publish_state()
 

@@ -60,6 +60,8 @@ class ExcavatorNode(Node):
 
         # Simple logging helpers similar to LunaboticsFSM
         self._logged_once = set()
+        # keep track of last announced state for quieter logging
+        self._last_announced_state = None
 
         self.get_logger().info('Excavator node started (dig_time=%.1fs dump_time=%.1fs)' % (self.dig_time, self.dump_time))
 
@@ -70,18 +72,37 @@ class ExcavatorNode(Node):
         getattr(self.get_logger(), level)(msg)
         self._logged_once.add(msg)
 
+    # ---- control functions (encapsulate behaviors) ----
+    def start_dig(self):
+        self.get_logger().info('Command: start_dig')
+        self.transition_to(ExcavatorState.DIGGING)
+
+    def stop_all(self):
+        self.get_logger().info('Command: stop_all')
+        self.transition_to(ExcavatorState.STOPPED)
+
+    def start_dump(self):
+        self.get_logger().info('Command: start_dump')
+        # allow dump from DIGGING or BUCKET_FULL
+        if self.state in (ExcavatorState.DIGGING, ExcavatorState.BUCKET_FULL):
+            self.transition_to(ExcavatorState.DUMPING)
+
+    def _on_bucket_full(self):
+        # Called when bucket becomes full
+        self.get_logger().info('Bucket is now FULL')
+
+    def _on_bucket_emptied(self):
+        self.get_logger().info('Bucket emptied')
+
     # ---- command handling ----
     def cmd_cb(self, msg: String):
         cmd = (msg.data or '').strip().lower()
         if cmd == 'start':
-            if self.state in (ExcavatorState.IDLE, ExcavatorState.STOPPED):
-                self.transition_to(ExcavatorState.DIGGING)
+            self.start_dig()
         elif cmd == 'stop':
-            self.transition_to(ExcavatorState.STOPPED)
+            self.stop_all()
         elif cmd == 'dump':
-            # Force a dump if currently full or digging
-            if self.state in (ExcavatorState.DIGGING, ExcavatorState.BUCKET_FULL):
-                self.transition_to(ExcavatorState.DUMPING)
+            self.start_dump()
         else:
             self.get_logger().warn(f'Unknown excavator command: "{cmd}"')
 
@@ -114,6 +135,8 @@ class ExcavatorNode(Node):
             # Simulate digging until bucket is full
             if elapsed >= self.dig_time:
                 self._bucket_full = True
+                # announce and transition
+                self._on_bucket_full()
                 self.transition_to(ExcavatorState.BUCKET_FULL)
             else:
                 # occasional info to show progress
@@ -129,6 +152,8 @@ class ExcavatorNode(Node):
             # Simulate dump
             if elapsed >= self.dump_time:
                 self._bucket_full = False
+                # finished dumping
+                self._on_bucket_emptied()
                 self.transition_to(ExcavatorState.IDLE)
 
         elif self.state == ExcavatorState.STOPPED:
@@ -136,6 +161,10 @@ class ExcavatorNode(Node):
             self.log_once('Excavator stopped (manual)')
 
         # publish state and bucket flag every loop
+        # quieter publish: only log state change once
+        if self._last_announced_state != self.state.name:
+            self.get_logger().info(f'Excavator state: {self.state.name}')
+            self._last_announced_state = self.state.name
         self.publish_state()
 
 
