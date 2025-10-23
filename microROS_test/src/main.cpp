@@ -87,7 +87,7 @@ rcl_timer_t read_timer;
 rcl_timer_t watchdog_timer;
 rcutils_time_point_value_t last_cmd_time;
 rcutils_time_point_value_t last_agent_time;
-const int WATCHDOG_TIMEOUT_NS = 150 *1000 *1000;
+const int WATCHDOG_TIMEOUT_NS = 330 *1000 *1000;
 const long long int AGENT_WATCHDOG_TIMEOUT_NS = 5LL * 1000 * 1000 * 1000;
 
 /*
