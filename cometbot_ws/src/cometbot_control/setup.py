@@ -20,7 +20,8 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-        	'teleop_publisher = cometbot_control.teleop_publisher:main'
+        	'teleop_publisher = cometbot_control.teleop_publisher:main',
+            'autonomy = cometbot_control.state_machine:main'
         ],
     },
 )
