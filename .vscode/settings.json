@@ -1,0 +1,3 @@
+{
+    "cmake.sourceDirectory": "${workspaceFolder}/microROS_test/extra_packages/custom_messages"
+}
