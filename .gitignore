@@ -1,2 +1,3 @@
 microROS_test/old_code/*
 /build/*
+/cometbot_ws/build/*
