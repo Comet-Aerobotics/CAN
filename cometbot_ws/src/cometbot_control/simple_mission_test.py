@@ -78,7 +78,7 @@ class SimpleMissionOrchestrator:
         if self.state != new_state:
             elapsed = time.monotonic() - self.state_start_time
             self.log(f"Duration: {elapsed:.1f}s")
-            self.log(f"Transition: {self.state.name} → {new_state.name}")
+            self.log(f"Transition: {self.state.name} -> {new_state.name}")
             self.state = new_state
             self.state_start_time = time.monotonic()
             self._log_once_messages.clear()

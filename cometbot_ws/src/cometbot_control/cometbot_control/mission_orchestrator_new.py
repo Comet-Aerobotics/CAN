@@ -7,7 +7,6 @@ from rclpy.executors import MultiThreadedExecutor
 from geometry_msgs.msg import Twist
 from std_msgs.msg import String, Float32, Bool
 
-
 class MissionState(Enum):
     STARTUP = auto()
     NAV_TO_MINE = auto()
