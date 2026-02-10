@@ -1,0 +1,7 @@
+# Minimal Python requirements for the excavator node when running in Docker
+# rclpy and std_msgs are provided by the ROS 2 install in the base image. If
+# you're running in a venv or custom image, pin versions here.
+# For local testing without a full ROS install you may install "ros-humble-rclpy"
+# via apt or use a local ros2 installation.
+
+# No pure-Python runtime deps required for this lightweight node.
