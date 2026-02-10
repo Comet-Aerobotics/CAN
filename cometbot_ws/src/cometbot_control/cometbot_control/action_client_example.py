@@ -1,158 +1,100 @@
 #!/usr/bin/env python3
 """
-Example showing how to use the action servers programmatically.
-Useful for integration testing and debugging.
+Example showing how to use the action types and orchestration logic.
 
-Run with:
-  python3 action_client_example.py
-  
-Requires: excavator_action_server and depositor_action_server running
+This demonstrates:
+1. How to create action goals using dataclasses
+2. How the mission state machine works
+3. How to manually test the logic
+
+For full testing with ROS 2 nodes, use:
+  python3 simple_mission_test.py (in parent directory)
 """
 
-import asyncio
-import rclpy
-from rclpy.node import Node
-from rclpy.action import ActionClient
-from rclpy.executors import MultiThreadedExecutor
-
-from cometbot_control.action import Excavate, Deposit
+from cometbot_control.action_types import (
+    ExcavateGoal, ExcavateResult, ExcavateFeedback,
+    DepositGoal, DepositResult, DepositFeedback
+)
 
 
-class ActionClientExample(Node):
-    def __init__(self):
-        super().__init__('action_client_example')
-        
-        self.excavate_client = ActionClient(self, Excavate, '/excavator/excavate')
-        self.deposit_client = ActionClient(self, Deposit, '/depositor/deposit')
+def example_action_creation():
+    """Show how to create action goals and results."""
+    print("\n=== Action Types Example ===\n")
+    
+    # Create an excavate goal
+    dig_goal = ExcavateGoal(dig_duration_sec=30.0)
+    print(f"Excavate Goal: {dig_goal}")
+    
+    # Create feedback
+    dig_feedback = ExcavateFeedback(
+        bucket_fill_percentage=75.5,
+        estimated_time_remaining=15
+    )
+    print(f"Excavate Feedback: {dig_feedback}")
+    
+    # Create result
+    dig_result = ExcavateResult(
+        material_collected_kg=5.0,
+        success=True
+    )
+    print(f"Excavate Result: {dig_result}")
+    
+    print()
+    
+    # Create a deposit goal
+    deposit_goal = DepositGoal(material_to_deposit_kg=5.0)
+    print(f"Deposit Goal: {deposit_goal}")
+    
+    # Create feedback
+    deposit_feedback = DepositFeedback(
+        deposit_progress_percentage=50.0,
+        estimated_time_remaining=3
+    )
+    print(f"Deposit Feedback: {deposit_feedback}")
+    
+    # Create result
+    deposit_result = DepositResult(
+        material_deposited_kg=5.0,
+        success=True
+    )
+    print(f"Deposit Result: {deposit_result}")
 
-    async def send_excavate_goal(self):
-        """Send a simple excavate goal."""
-        print("\n=== Testing Excavate Action ===")
-        
-        # Wait for server
-        if not self.excavate_client.wait_for_server(timeout_sec=3.0):
-            print("Excavator action server not available!")
-            return False
-        
-        # Create goal
-        goal_msg = Excavate.Goal()
-        goal_msg.dig_duration_sec = 10.0  # Short test dig
-        
-        print(f"Sending excavate goal: dig_duration={goal_msg.dig_duration_sec}s")
-        
-        # Send and wait for result
-        send_goal_future = self.excavate_client.send_goal_async(
-            goal_msg,
-            feedback_callback=self.excavate_feedback_callback
-        )
-        
-        goal_handle = await send_goal_future
-        if not goal_handle.accepted:
-            print("Goal rejected!")
-            return False
-        
-        print("Goal accepted! Waiting for result...")
-        result_future = goal_handle.get_result_async()
-        result = await result_future
-        
-        if result.success:
-            print(f"✓ Excavation succeeded: {result.material_collected_kg:.2f}kg collected")
+
+def example_mission_flow():
+    """Show the expected mission flow with these action types."""
+    print("\n=== Expected Mission Flow ===\n")
+    
+    flow = [
+        ("1. FSM creates excavate goal", ExcavateGoal(dig_duration_sec=30)),
+        ("2. Excavator receives goal", "→ starts digging"),
+        ("3. Excavator publishes feedback", ExcavateFeedback(75.0, 5)),
+        ("4. FSM receives feedback", "→ updates bucket fill display"),
+        ("5. Excavation completes", ExcavateResult(5.0, True)),
+        ("6. FSM receives result", "→ updates total material"),
+        ("7. FSM creates deposit goal", DepositGoal(5.0)),
+        ("8. Depositor receives goal", "→ starts dumping"),
+        ("9. Depositor publishes feedback", DepositFeedback(50.0, 3)),
+        ("10. Deposition completes", DepositResult(5.0, True)),
+        ("11. FSM checks mission complete", "→ repeat or finish"),
+    ]
+    
+    for step, data in flow:
+        print(f"{step}")
+        if hasattr(data, '__dataclass_fields__'):
+            print(f"     {data}")
         else:
-            print("✗ Excavation failed")
-        
-        return result.success
-
-    def excavate_feedback_callback(self, feedback_msg):
-        """Called when excavator publishes feedback."""
-        feedback = feedback_msg.feedback
-        print(f"  Feedback: {feedback.bucket_fill_percentage:.1f}% full, "
-              f"{feedback.estimated_time_remaining}s remaining")
-
-    async def send_deposit_goal(self):
-        """Send a simple deposit goal."""
-        print("\n=== Testing Deposit Action ===")
-        
-        # Wait for server
-        if not self.deposit_client.wait_for_server(timeout_sec=3.0):
-            print("Depositor action server not available!")
-            return False
-        
-        # Create goal
-        goal_msg = Deposit.Goal()
-        goal_msg.material_to_deposit_kg = 5.0
-        
-        print(f"Sending deposit goal: material_to_deposit={goal_msg.material_to_deposit_kg:.2f}kg")
-        
-        # Send and wait for result
-        send_goal_future = self.deposit_client.send_goal_async(
-            goal_msg,
-            feedback_callback=self.deposit_feedback_callback
-        )
-        
-        goal_handle = await send_goal_future
-        if not goal_handle.accepted:
-            print("Goal rejected!")
-            return False
-        
-        print("Goal accepted! Waiting for result...")
-        result_future = goal_handle.get_result_async()
-        result = await result_future
-        
-        if result.success:
-            print(f"✓ Deposit succeeded: {result.material_deposited_kg:.2f}kg deposited")
-        else:
-            print("✗ Deposit failed")
-        
-        return result.success
-
-    def deposit_feedback_callback(self, feedback_msg):
-        """Called when depositor publishes feedback."""
-        feedback = feedback_msg.feedback
-        print(f"  Feedback: {feedback.deposit_progress_percentage:.1f}% complete, "
-              f"{feedback.estimated_time_remaining}s remaining")
-
-    async def run_example_sequence(self):
-        """Run a simple example sequence."""
-        print("\n" + "=" * 50)
-        print("ACTION CLIENT EXAMPLE")
-        print("=" * 50)
-        
-        # Test single dig
-        result = await self.send_excavate_goal()
-        if not result:
-            print("Failed to excavate, stopping")
-            return
-        
-        # Test deposit
-        result = await self.send_deposit_goal()
-        if not result:
-            print("Failed to deposit, stopping")
-            return
-        
-        print("\n" + "=" * 50)
-        print("✓ Example completed successfully!")
-        print("=" * 50)
-
-
-async def main(args=None):
-    rclpy.init(args=args)
-    
-    # Create node
-    node = ActionClientExample()
-    executor = MultiThreadedExecutor()
-    executor.add_node(node)
-    
-    # Run example in background
-    example_task = asyncio.create_task(node.run_example_sequence())
-    
-    # Spin executor
-    while not example_task.done():
-        executor.spin_once(timeout_sec=0.1)
-    
-    # Cleanup
-    node.destroy_node()
-    rclpy.shutdown()
+            print(f"     {data}")
+        print()
 
 
 if __name__ == '__main__':
-    asyncio.run(main())
+    print("=" * 70)
+    print("ACTION ORCHESTRATION EXAMPLE")
+    print("=" * 70)
+    
+    example_action_creation()
+    example_mission_flow()
+    
+    print("\n" + "=" * 70)
+    print("\nFor full mission orchestration test, run: python3 simple_mission_test.py")
+    print("=" * 70 + "\n")

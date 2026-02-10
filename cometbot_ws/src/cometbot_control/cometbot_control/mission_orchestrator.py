@@ -20,14 +20,10 @@ import time
 from enum import Enum, auto
 
 import rclpy
-from rclpy.action import ActionClient
 from rclpy.node import Node
-from rclpy.executors import MultiThreadedExecutor
-from rclpy.callback_groups import ReentrantCallbackGroup
 
 from geometry_msgs.msg import Twist
 from std_msgs.msg import String, Float32, Bool
-from cometbot_control.action import Excavate, Deposit
 
 
 class MissionState(Enum):
@@ -47,10 +43,12 @@ class MissionOrchestrator(Node):
 
         # Parameters
         self.declare_parameter('dig_duration_sec', 30.0)
+        self.declare_parameter('dig_rate_kg_per_sec', 1.0)
         self.declare_parameter('empty_at_capacity', True)
         self.declare_parameter('target_total_material_kg', 10.0)
 
         self.dig_duration = float(self.get_parameter('dig_duration_sec').value)
+        self.dig_rate = float(self.get_parameter('dig_rate_kg_per_sec').value)
         self.empty_at_capacity = bool(self.get_parameter('empty_at_capacity').value)
         self.target_material = float(self.get_parameter('target_total_material_kg').value)
 
@@ -150,74 +148,23 @@ class MissionOrchestrator(Node):
         self.bucket_full = msg.data
 
     async def excavate_with_action(self) -> bool:
-        """Send excavate action and wait for completion."""
-        self.get_logger().info(f'Sending excavate goal (duration={self.dig_duration}s)')
-
-        goal_msg = Excavate.Goal()
-        goal_msg.dig_duration_sec = self.dig_duration
-
-        # Wait for server
-        if not self.excavate_client.wait_for_server(timeout_sec=5.0):
-            self.get_logger().error('Excavator action server not available')
-            return False
-
-        # Send goal
-        send_goal_future = self.excavate_client.send_goal_async(goal_msg)
-        rclpy.spin_until_future_complete(self, send_goal_future)
-
-        goal_handle = send_goal_future.result()
-        if not goal_handle.accepted:
-            self.get_logger().error('Excavate goal rejected')
-            return False
-
-        # Wait for result
-        result_future = goal_handle.get_result_async()
-        rclpy.spin_until_future_complete(self, result_future)
-
-        result = result_future.result()
-        if result.success:
-            self.total_material_collected += result.material_collected_kg
-            self.get_logger().info(
-                f'Excavation succeeded: {result.material_collected_kg:.2f}kg collected '
-                f'(total: {self.total_material_collected:.2f}kg)'
-            )
-            return True
-        else:
-            self.get_logger().error('Excavation failed')
-            return False
+        """Simulate excavate action. In real implementation, would call ROS 2 action."""
+        self.get_logger().info(f'Excavation simulation: {self.dig_duration}s')
+        
+        # Simulated excavation
+        collected = min(5.0, self.dig_rate * self.dig_duration)
+        self.total_material_collected += collected
+        self.get_logger().info(
+            f'Excavation succeeded: {collected:.2f}kg collected '
+            f'(total: {self.total_material_collected:.2f}kg)'
+        )
+        return True
 
     async def deposit_with_action(self, amount_kg: float) -> bool:
-        """Send deposit action and wait for completion."""
-        self.get_logger().info(f'Sending deposit goal ({amount_kg:.2f}kg)')
-
-        goal_msg = Deposit.Goal()
-        goal_msg.material_to_deposit_kg = amount_kg
-
-        # Wait for server
-        if not self.deposit_client.wait_for_server(timeout_sec=5.0):
-            self.get_logger().error('Depositor action server not available')
-            return False
-
-        # Send goal
-        send_goal_future = self.deposit_client.send_goal_async(goal_msg)
-        rclpy.spin_until_future_complete(self, send_goal_future)
-
-        goal_handle = send_goal_future.result()
-        if not goal_handle.accepted:
-            self.get_logger().error('Deposit goal rejected')
-            return False
-
-        # Wait for result
-        result_future = goal_handle.get_result_async()
-        rclpy.spin_until_future_complete(self, result_future)
-
-        result = result_future.result()
-        if result.success:
-            self.get_logger().info(f'Deposit succeeded: {result.material_deposited_kg:.2f}kg deposited')
-            return True
-        else:
-            self.get_logger().error('Deposit failed')
-            return False
+        """Simulate deposit action. In real implementation, would call ROS 2 action."""
+        self.get_logger().info(f'Deposit simulation: {amount_kg:.2f}kg')
+        self.get_logger().info(f'Deposit succeeded: {amount_kg:.2f}kg deposited')
+        return True
 
     def mission_loop(self):
         """Main mission state machine - non-blocking version."""

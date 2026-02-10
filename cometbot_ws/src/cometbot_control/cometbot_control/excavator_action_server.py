@@ -1,27 +1,21 @@
 #!/usr/bin/env python3
 """
-Excavator action server that handles dig operations.
-Uses ROS Actions to provide non-blocking excavation with feedback.
+Excavator action server stub.
 
-Action: /excavator/excavate (Excavate)
-  Goal: dig_duration_sec
-  Result: material_collected_kg, success
-  Feedback: bucket_fill_percentage, estimated_time_remaining
+NOTE: This is a placeholder implementation without ROS 2 ActionServer.
+For full ROS 2 integration, use action_types dataclasses with proper
+ROS 2 ActionServer implementation.
 
-Subscribes to:
-  /load_sensor/weight - monitors bucket fill level
+This demonstrates the data structures and logic flow for excavator operations.
 """
 import time
 from enum import Enum, auto
 
 import rclpy
-from rclpy.action import ActionServer, CancelResponse, GoalResponse
 from rclpy.node import Node
-from rclpy.executors import MultiThreadedExecutor
-from rclpy.callback_groups import ReentrantCallbackGroup
 
 from std_msgs.msg import Float32
-from cometbot_control.action import Excavate
+from cometbot_control.action_types import ExcavateGoal, ExcavateResult, ExcavateFeedback
 
 
 class ExcavatorState(Enum):

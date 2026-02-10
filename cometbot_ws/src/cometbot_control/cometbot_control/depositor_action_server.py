@@ -1,27 +1,21 @@
 #!/usr/bin/env python3
 """
-Depositor action server that handles material deposition.
-Uses ROS Actions to provide non-blocking deposit operations.
+Depositor action server stub.
 
-Action: /depositor/deposit (Deposit)
-  Goal: material_to_deposit_kg
-  Result: material_deposited_kg, success
-  Feedback: deposit_progress_percentage, estimated_time_remaining
+NOTE: This is a placeholder implementation without ROS 2 ActionServer.
+For full ROS 2 integration, use action_types dataclasses with proper
+ROS 2 ActionServer implementation.
 
-Publishes to:
-  /depositor/cmd (String) - state information for visualization
+This demonstrates the data structures and logic flow for deposition operations.
 """
 import time
 from enum import Enum, auto
 
 import rclpy
-from rclpy.action import ActionServer, CancelResponse, GoalResponse
 from rclpy.node import Node
-from rclpy.executors import MultiThreadedExecutor
-from rclpy.callback_groups import ReentrantCallbackGroup
 
 from std_msgs.msg import String
-from cometbot_control.action import Deposit
+from cometbot_control.action_types import DepositGoal, DepositResult, DepositFeedback
 
 
 class DepositorState(Enum):
