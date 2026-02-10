@@ -1,0 +1,7 @@
+int32 dig_duration_sec
+---
+float32 material_collected_kg
+bool success
+---
+float32 bucket_fill_percentage
+int32 estimated_time_remaining

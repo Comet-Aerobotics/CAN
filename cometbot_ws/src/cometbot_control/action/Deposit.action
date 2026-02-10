@@ -1,0 +1,7 @@
+float32 material_to_deposit_kg
+---
+float32 material_deposited_kg
+bool success
+---
+float32 deposit_progress_percentage
+int32 estimated_time_remaining
