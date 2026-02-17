@@ -102,7 +102,7 @@ bool was_enabled = false;
 */
 SPARK_MAX drive_base_left = SPARK_MAX(11);
 SPARK_MAX drive_base_right = SPARK_MAX(10);
-
+SPARK_MAX excavator_winch = SPARK_MAX(12);
 /*
  * Other
  */
