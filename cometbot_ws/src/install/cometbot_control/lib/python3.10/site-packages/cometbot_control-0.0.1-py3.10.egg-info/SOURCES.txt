@@ -10,7 +10,16 @@ setup.py
 ../build/cometbot_control/cometbot_control.egg-info/top_level.txt
 ../build/cometbot_control/cometbot_control.egg-info/zip-safe
 cometbot_control/__init__.py
+cometbot_control/action_client_example.py
+cometbot_control/action_types.py
+cometbot_control/depositor_action_server.py
+cometbot_control/excavator_action_server.py
+cometbot_control/mission_orchestrator.py
+cometbot_control/mission_orchestrator_new.py
 cometbot_control/teleop_publisher.py
+cometbot_control/sensors/__init__.py
+cometbot_control/sensors/load_sensor.py
+launch/mission_sim.launch.py
 resource/cometbot_control
 test/test_copyright.py
 test/test_flake8.py

@@ -1,7 +1,10 @@
+# Goal
 float32 material_to_deposit_kg
 ---
+# Result
 float32 material_deposited_kg
 bool success
 ---
+#Feedback
 float32 deposit_progress_percentage
 int32 estimated_time_remaining

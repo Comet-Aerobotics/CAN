@@ -60,7 +60,7 @@ char log_message[256];  // Adjust size as needed\
 char hearbeat_start_string[64];  // Adjust size as needed
 unsigned long int start_time;
 char cmd_vel_string[64];  // Adjust size as needed
-
+const int DEPOSITOR_MOTOR_CAN_ID = 13;
 /*
  * Subscribers
  */
@@ -103,6 +103,11 @@ bool was_enabled = false;
 SPARK_MAX drive_base_left = SPARK_MAX(11);
 SPARK_MAX drive_base_right = SPARK_MAX(10);
 SPARK_MAX excavator_winch = SPARK_MAX(12);
+
+// depositor motor
+SPARK_MAX depositor_motor = SPARK_MAX(DEPOSITOR_MOTOR_CAN_ID);
+
+
 /*
  * Other
  */
@@ -433,6 +438,11 @@ void setup_CAN(){
   // CAN DEVICES
   CANCHECK(drive_base_left.initialize_SPARK_MAX(CAN_Helper, CAN0));
   CANCHECK(drive_base_right.initialize_SPARK_MAX(CAN_Helper, CAN0));
+
+  // depositor motor 
+  CANCHECK(depositor_motor.initialize_SPARK_MAX(CAN_Helper, CAN0));
+  CAN_Helper.add_to_CAN_dev_arr(&depositor_motor);
+
   
 }
 
