@@ -66,8 +66,10 @@ const int DEPOSITOR_MOTOR_CAN_ID = 13;
  */
 rcl_subscription_t cmd_vel_subscriber;
 geometry_msgs__msg__Twist cmd_vel;
+rcl_subscription_t depositor_subscriber;
 rcl_subscription_t enabled_subscriber;
 std_msgs__msg__Bool enabled;
+std_msgs__msg__String depositor_status;
 
 /*
  * ROS Core
@@ -290,6 +292,19 @@ void cmd_vel_callback(const void * msgin) {
   
 }
 
+void depositor_callback(const void * msgin) {
+      const std_msgs__msg__String * msg = (const std_msgs__msg__String *)msgin;
+      // checks if the string from the publisher is "DEPOSITING" before turning on the depositor motor
+      if (msg != NULL && strcmp(msg->data.data, "DEPOSITING") == 0) {
+        
+        depositor_motor.set_control_frame(control_mode::Duty_Cycle_Set, 0.5);
+      }
+      else{
+        depositor_motor.set_control_frame(control_mode::Duty_Cycle_Set, 0);
+      }
+}
+
+
 /*
  * Subscription callback function for enabled messages
  */
@@ -316,6 +331,7 @@ void setup() {
   pinMode(LED, OUTPUT);  // Set LED_PIN as output
   digitalWrite(LED, HIGH);  // Turn on the LED
 
+  
   setup_CAN();
   
   // Setup Node. Shouldn't need to change.
@@ -401,6 +417,15 @@ void setup_subscribers(){
     &node,
     ROSIDL_GET_MSG_TYPE_SUPPORT(std_msgs, msg, Bool),
     "enabled"));
+
+    // createa subscriber for depositor status
+
+    RCCHECK(rclc_subscription_init_default(
+    &depositor_subscriber,
+    &node,
+    ROSIDL_GET_MSG_TYPE_SUPPORT(std_msgs, msg, String),
+    "/depositor/status"));
+
 }
 
 /*
@@ -409,12 +434,14 @@ void setup_subscribers(){
 void setup_executor(){
   // Create an executor, set number of handles, and add handles
   // Order added defines execution hierarchy (FIFO)
-  RCCHECK(rclc_executor_init(&executor, &support.context, 5, &allocator));
+  RCCHECK(rclc_executor_init(&executor, &support.context, 6, &allocator));
   RCCHECK(rclc_executor_add_timer(&executor, &CAN_core_timer));
-  RCCHECK(rclc_executor_add_timer(&executor, &robot_status_timer))
+  RCCHECK(rclc_executor_add_timer(&executor, &robot_status_timer));
   RCCHECK(rclc_executor_add_timer(&executor, &read_timer));
   RCCHECK(rclc_executor_add_subscription(&executor, &cmd_vel_subscriber, &cmd_vel, cmd_vel_callback, ON_NEW_DATA)); // or ALWAYS
   RCCHECK(rclc_executor_add_subscription(&executor, &enabled_subscriber, &enabled, enabled_callback, ALWAYS)); // or ALWAYS
+  RCCHECK(rclc_executor_add_subscription(&executor, &depositor_subscriber, &depositor_status, depositor_callback, ON_NEW_DATA)); 
+
 }
 
 /*
@@ -468,5 +495,10 @@ void initialize_vars(){
 
   logger.data.size = 100;
   enabled.data = true; // Change to false by default once web GUI has been built (ONLY FOR TESTING)
-  // may need to use something like std_msgs__msg__String__fini(&sub_msg); for messages that are arrays
+  // may need to use something like std_msgs__msg__String__fini(&sub_msg); for messages that are arrays 
+
+  static char incoming_status_buffer[50];
+  depositor_status.data.data = incoming_status_buffer;
+  depositor_status.data.capacity = 50;
+
 }

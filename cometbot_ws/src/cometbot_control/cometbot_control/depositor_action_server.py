@@ -13,6 +13,7 @@ from rclpy.node import Node
 from rclpy.executors import MultiThreadedExecutor
 from cometbot_control.action import Deposit 
 from rclpy.action import ActionClient
+from rclpy.action import ActionServer
 from rclpy.action.server import ServerGoalHandle;
 from std_msgs.msg import String
 
@@ -60,7 +61,7 @@ class DepositorActionServer(Node):
         # Calculate how long it will take to deposit and compare against max time
         current_required_deposit_time = material / self.deposit_rate 
 
-        result = Depositor.Result()
+        result = Deposit.Result()
 
         if current_required_deposit_time > self.max_deposit_time :
             self.get_logger().info("Error: It will take too long to deposit");
@@ -94,6 +95,9 @@ class DepositorActionServer(Node):
                 self.state = DepositorState.STOPPED
                 result.success = False
                 return result
+            status_msg = String()
+            status_msg.data = "DEPOSITING"
+            self.status_pub.publish(status_msg)
 
             
             time.sleep(0.05)
