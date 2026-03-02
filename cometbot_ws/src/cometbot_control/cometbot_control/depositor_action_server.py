@@ -105,7 +105,7 @@ class DepositorActionServer(Node):
                 # 10Hz loop means dt = 0.1
                 total_mass_deposited += (current_power * motor_current * MASS_MAGIC_NUMBER * 0.1)
 
-            # Update Hardware
+            # Publish message with power
             cmd_msg = String()
             cmd_msg.data = f"POWER:{current_power:.2f}"
             self.status_pub.publish(cmd_msg)

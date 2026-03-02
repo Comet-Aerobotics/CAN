@@ -61,15 +61,17 @@ char hearbeat_start_string[64];  // Adjust size as needed
 unsigned long int start_time;
 char cmd_vel_string[64];  // Adjust size as needed
 const int DEPOSITOR_MOTOR_CAN_ID = 13;
+const int EXCAVATOR_MOTOR_CAN_ID = 14;
 /*
  * Subscribers
  */
 rcl_subscription_t cmd_vel_subscriber;
 geometry_msgs__msg__Twist cmd_vel;
 rcl_subscription_t depositor_subscriber;
+rcl_subscription_t excavator_subscriber;
 rcl_subscription_t enabled_subscriber;
 std_msgs__msg__Bool enabled;
-std_msgs__msg__String depositor_status;
+std_msgs__msg__String excavator_status;
 
 /*
  * ROS Core
@@ -107,7 +109,10 @@ SPARK_MAX drive_base_right = SPARK_MAX(10);
 SPARK_MAX excavator_winch = SPARK_MAX(12);
 
 // depositor motor
-SPARK_MAX depositor_motor = SPARK_MAX(DEPOSITOR_MOTOR_CAN_ID);
+SPARK_MAX depositor_motor = SPARK_MAX(DEPOSITOR_MOTOR_CAN_ID);  
+// excavator motor
+SPARK_MAX excavator_motor = SPARK_MAX(EXCAVATOR_MOTOR_CAN_ID);
+
 
 
 /*
@@ -296,13 +301,17 @@ void depositor_callback(const void * msgin) {
       const std_msgs__msg__String * msg = (const std_msgs__msg__String *)msgin;
       char* data = (char*)msg->data.data;
       if (strncmp(data, "POWER:",6) == 0){
-       float power_val = atof(msg + 6);
+       float power_val = atof(data + 6);
        depositor_motor.set_control_frame(control_mode::Duty_Cycle_Set,power_val);
       }
       else{
         depositor_motor.set_control_frame(control_mode::Duty_Cycle_Set,power_val);
 
       }
+}
+void excavator_callback(const void * msgin){
+      const std_msgs__msg__String * msg = (const std_msgs__msg__String *)msgin;
+
 }
 
 
@@ -427,6 +436,14 @@ void setup_subscribers(){
     ROSIDL_GET_MSG_TYPE_SUPPORT(std_msgs, msg, String),
     "/depositor/status"));
 
+    // create a subscriber for  excavator status
+
+     RCCHECK(rclc_subscription_init_default(
+    &excavator_subscriber,
+    &node,
+    ROSIDL_GET_MSG_TYPE_SUPPORT(std_msgs, msg, String),
+    "/excavator/status"));
+
 }
 
 /*
@@ -435,13 +452,15 @@ void setup_subscribers(){
 void setup_executor(){
   // Create an executor, set number of handles, and add handles
   // Order added defines execution hierarchy (FIFO)
-  RCCHECK(rclc_executor_init(&executor, &support.context, 6, &allocator));
+  RCCHECK(rclc_executor_init(&executor, &support.context, 7, &allocator));
   RCCHECK(rclc_executor_add_timer(&executor, &CAN_core_timer));
   RCCHECK(rclc_executor_add_timer(&executor, &robot_status_timer));
   RCCHECK(rclc_executor_add_timer(&executor, &read_timer));
   RCCHECK(rclc_executor_add_subscription(&executor, &cmd_vel_subscriber, &cmd_vel, cmd_vel_callback, ON_NEW_DATA)); // or ALWAYS
   RCCHECK(rclc_executor_add_subscription(&executor, &enabled_subscriber, &enabled, enabled_callback, ALWAYS)); // or ALWAYS
   RCCHECK(rclc_executor_add_subscription(&executor, &depositor_subscriber, &depositor_status, depositor_callback, ON_NEW_DATA)); 
+  RCCHECK(rclc_executor_add_subscription(&executor, &excavator_subscriber, &excavator_status, excavator_callback, ON_NEW_DATA)); 
+
 
 }
 
@@ -471,6 +490,11 @@ void setup_CAN(){
   CANCHECK(depositor_motor.initialize_SPARK_MAX(CAN_Helper, CAN0));
   CAN_Helper.add_to_CAN_dev_arr(&depositor_motor);
 
+  // excavator motor
+  CANCHECK(excavator_motor.initialize_SPARK_MAX(CAN_Helper, CAN0));
+  CAN_Helper.add_to_CAN_dev_arr(&excavator_motor);
+
+
   
 }
 
@@ -498,8 +522,13 @@ void initialize_vars(){
   enabled.data = true; // Change to false by default once web GUI has been built (ONLY FOR TESTING)
   // may need to use something like std_msgs__msg__String__fini(&sub_msg); for messages that are arrays 
 
-  static char incoming_status_buffer[50];
-  depositor_status.data.data = incoming_status_buffer;
-  depositor_status.data.capacity = 50;
+  static char incoming_status_buffer_depositor[50];
+  depositor_status.data.data = incoming_status_buffer_depositor;
+  depositor_status.data.capacity = 50; 
+
+
+    static char incoming_status_buffer_excavator[50];
+  excavator_status.data.data = incoming_status_buffer_excavator;
+  excavator_status.data.capacity = 50;
 
 }
