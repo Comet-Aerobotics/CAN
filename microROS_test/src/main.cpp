@@ -294,13 +294,14 @@ void cmd_vel_callback(const void * msgin) {
 
 void depositor_callback(const void * msgin) {
       const std_msgs__msg__String * msg = (const std_msgs__msg__String *)msgin;
-      // checks if the string from the publisher is "DEPOSITING" before turning on the depositor motor
-      if (msg != NULL && strcmp(msg->data.data, "DEPOSITING") == 0) {
-        
-        depositor_motor.set_control_frame(control_mode::Duty_Cycle_Set, 0.5);
+      char* data = (char*)msg->data.data;
+      if (strncmp(data, "POWER:",6) == 0){
+       float power_val = atof(msg + 6);
+       depositor_motor.set_control_frame(control_mode::Duty_Cycle_Set,power_val);
       }
       else{
-        depositor_motor.set_control_frame(control_mode::Duty_Cycle_Set, 0);
+        depositor_motor.set_control_frame(control_mode::Duty_Cycle_Set,power_val);
+
       }
 }
 
