@@ -34,6 +34,10 @@
 #include "SPARK_MAX.h"
 #include "Comet_CAN_Common.h"
 
+// I put random pin values change later
+#define LASER_PIN 5
+#define VIBRATOR_PIN 6
+
 /*
  * Function Prototypes
  */
@@ -50,6 +54,10 @@ void update_robot_data_from_Spark_Max(SPARK_MAX *spark_max);
 /*
  * Publishers
  */
+//laser
+rcl_publisher_t laser_status_publisher;
+std_msgs__msg__Bool laser_msg;
+
 rcl_publisher_t robot_data_publisher;
 custom_messages__msg__RobotStatusMessage robot_data;
 // Logger
@@ -71,7 +79,14 @@ rcl_subscription_t depositor_subscriber;
 rcl_subscription_t excavator_subscriber;
 rcl_subscription_t enabled_subscriber;
 std_msgs__msg__Bool enabled;
-std_msgs__msg__String excavator_status;
+std_msgs__msg__String excavator_status; 
+
+
+rcl_subscription_t actuator_voltage_subscriber;
+std_msgs__msg__Float32 actuator_voltage_msg;
+
+rcl_subscription_t vibrator_subscriber;
+std_msgs__msg__Bool vibrator_msg;
 
 /*
  * ROS Core
@@ -179,6 +194,8 @@ void robot_status_timer_callback(rcl_timer_t * timer, int64_t last_call_time) {
     update_robot_data_from_Spark_Max(robot_data.right_drivebase, &drive_base_right);
     log_logging(drive_base_right.to_string().c_str());
     RCSOFTCHECK(rcl_publish(&robot_data_publisher, &robot_data, NULL));
+    laser_msg.data = (digitalRead(LASER_PIN) == LOW); 
+    RCSOFTCHECK(rcl_publish(&laser_status_publisher, &laser_msg, NULL));
   }
 }
 
@@ -309,10 +326,25 @@ void depositor_callback(const void * msgin) {
 
       }
 }
-void excavator_callback(const void * msgin){
-      const std_msgs__msg__String * msg = (const std_msgs__msg__String *)msgin;
+void actuator_voltage_callback(const void * msgin) {
+    const std_msgs__msg__Float32 * msg = (const std_msgs__msg__Float32 *)msgin;
+    if (msg != NULL) {
+        float power = msg->data / 12.0; 
+        
+        
+        if (power > 1.0) power = 1.0;
+        if (power < -1.0) power = -1.0;
 
+        excavator_motor.set_control_frame(control_mode::Duty_Cycle_Set, power);
+    }
 }
+void vibrator_callback(const void * msgin) {
+    const std_msgs__msg__Bool * msg = (const std_msgs__msg__Bool *)msgin;
+    if (msg != NULL) {
+        digitalWrite(VIBRATOR_PIN, msg->data ? HIGH : LOW);
+    }
+}
+
 
 
 /*
@@ -340,7 +372,8 @@ void setup() {
   pinMode(CAN0_INT, INPUT);  // Configuring pin for /INT input
   pinMode(LED, OUTPUT);  // Set LED_PIN as output
   digitalWrite(LED, HIGH);  // Turn on the LED
-
+  pinMode(LASER_PIN, INPUT_PULLUP);
+  pinMode(VIBRATOR_PIN, OUTPUT);
   
   setup_CAN();
   
@@ -408,6 +441,13 @@ void setup_publishers(){
     &node,
     ROSIDL_GET_MSG_TYPE_SUPPORT(std_msgs, msg, String),
     "micro_ROS_logging"));
+
+    // laser sensor publisher
+    RCCHECK(rclc_publisher_init_default(
+    &laser_status_publisher,
+    &node,
+    ROSIDL_GET_MSG_TYPE_SUPPORT(std_msgs, msg, Bool),
+    "/laser_sensor/status"));
 }
 
 /*
@@ -436,13 +476,18 @@ void setup_subscribers(){
     ROSIDL_GET_MSG_TYPE_SUPPORT(std_msgs, msg, String),
     "/depositor/status"));
 
-    // create a subscriber for  excavator status
-
-     RCCHECK(rclc_subscription_init_default(
-    &excavator_subscriber,
+    // create a subscriber for actuator voltage and vibrator
+    RCCHECK(rclc_subscription_init_default(
+    &actuator_voltage_subscriber,
     &node,
-    ROSIDL_GET_MSG_TYPE_SUPPORT(std_msgs, msg, String),
-    "/excavator/status"));
+    ROSIDL_GET_MSG_TYPE_SUPPORT(std_msgs, msg, Float32),
+    "/hardware/actuator_voltage"));
+
+RCCHECK(rclc_subscription_init_default(
+    &vibrator_subscriber,
+    &node,
+    ROSIDL_GET_MSG_TYPE_SUPPORT(std_msgs, msg, Bool),
+    "/hardware/vibrator"));
 
 }
 
@@ -452,14 +497,15 @@ void setup_subscribers(){
 void setup_executor(){
   // Create an executor, set number of handles, and add handles
   // Order added defines execution hierarchy (FIFO)
-  RCCHECK(rclc_executor_init(&executor, &support.context, 7, &allocator));
+  RCCHECK(rclc_executor_init(&executor, &support.context, 10, &allocator));
   RCCHECK(rclc_executor_add_timer(&executor, &CAN_core_timer));
   RCCHECK(rclc_executor_add_timer(&executor, &robot_status_timer));
   RCCHECK(rclc_executor_add_timer(&executor, &read_timer));
   RCCHECK(rclc_executor_add_subscription(&executor, &cmd_vel_subscriber, &cmd_vel, cmd_vel_callback, ON_NEW_DATA)); // or ALWAYS
   RCCHECK(rclc_executor_add_subscription(&executor, &enabled_subscriber, &enabled, enabled_callback, ALWAYS)); // or ALWAYS
   RCCHECK(rclc_executor_add_subscription(&executor, &depositor_subscriber, &depositor_status, depositor_callback, ON_NEW_DATA)); 
-  RCCHECK(rclc_executor_add_subscription(&executor, &excavator_subscriber, &excavator_status, excavator_callback, ON_NEW_DATA)); 
+  RCCHECK(rclc_executor_add_subscription(&executor, &actuator_voltage_subscriber, &actuator_voltage_msg, actuator_voltage_callback, ON_NEW_DATA));
+  RCCHECK(rclc_executor_add_subscription(&executor, &vibrator_subscriber, &vibrator_msg, vibrator_callback, ON_NEW_DATA));
 
 
 }
