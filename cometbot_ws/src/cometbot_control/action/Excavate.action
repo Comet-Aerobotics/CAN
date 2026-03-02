@@ -1,7 +1,8 @@
 int32 dig_duration_sec
 ---
-float32 material_collected_kg
 bool success
+bool is_full
+float32 time_spent
 ---
-float32 bucket_fill_percentage
+bool laser_tripped
 int32 estimated_time_remaining

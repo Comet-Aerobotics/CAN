@@ -102,7 +102,6 @@ class DepositorActionServer(Node):
             
             # Mass Calculation
             if motion_detected:
-                # 10Hz loop means dt = 0.1
                 total_mass_deposited += (current_power * motor_current * MASS_MAGIC_NUMBER * 0.1)
 
             # Publish message with power
