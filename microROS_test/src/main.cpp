@@ -70,12 +70,14 @@ unsigned long int start_time;
 char cmd_vel_string[64];  // Adjust size as needed
 const int DEPOSITOR_MOTOR_CAN_ID = 13;
 const int EXCAVATOR_MOTOR_CAN_ID = 14;
+const int ACTUATOR_CAN_ID = 15;
 /*
  * Subscribers
  */
 rcl_subscription_t cmd_vel_subscriber;
 geometry_msgs__msg__Twist cmd_vel;
 rcl_subscription_t depositor_subscriber;
+std_msgs__msg__Float32 depositor_msg;
 rcl_subscription_t excavator_subscriber;
 rcl_subscription_t enabled_subscriber;
 std_msgs__msg__Bool enabled;
@@ -127,6 +129,8 @@ SPARK_MAX excavator_winch = SPARK_MAX(12);
 SPARK_MAX depositor_motor = SPARK_MAX(DEPOSITOR_MOTOR_CAN_ID);  
 // excavator motor
 SPARK_MAX excavator_motor = SPARK_MAX(EXCAVATOR_MOTOR_CAN_ID);
+// actuator 
+SPARK_MAX actuator = SPARK_MAX(ACTUATOR_CAN_ID);
 
 
 
@@ -193,9 +197,22 @@ void robot_status_timer_callback(rcl_timer_t * timer, int64_t last_call_time) {
     log_logging(drive_base_left.to_string().c_str());
     update_robot_data_from_Spark_Max(robot_data.right_drivebase, &drive_base_right);
     log_logging(drive_base_right.to_string().c_str());
-    RCSOFTCHECK(rcl_publish(&robot_data_publisher, &robot_data, NULL));
-    laser_msg.data = (digitalRead(LASER_PIN) == LOW); 
-    RCSOFTCHECK(rcl_publish(&laser_status_publisher, &laser_msg, NULL));
+    update_robot_data_from_Spark_Max(robot_data.excavator, &excavator_motor);
+    update_robot_data_from_Spark_Max(robot_data.depositor, &depositor_motor);
+     
+
+    // vibrator wiggle logic
+   if (vibrator_msg.data) {
+    
+    float wiggle_magnitude = 0.25; 
+    float wiggle = (millis() % 50 < 25) ? wiggle_magnitude : -wiggle_magnitude;
+    
+    excavator_motor.set_control_frame(control_mode::Duty_Cycle_Set, wiggle);
+  }
+
+  RCSOFTCHECK(rcl_publish(&robot_data_publisher, &robot_data, NULL));
+  laser_msg.data = (digitalRead(LASER_PIN) == LOW); 
+  RCSOFTCHECK(rcl_publish(&laser_status_publisher, &laser_msg, NULL));
   }
 }
 
@@ -315,27 +332,23 @@ void cmd_vel_callback(const void * msgin) {
 }
 
 void depositor_callback(const void * msgin) {
-      const std_msgs__msg__String * msg = (const std_msgs__msg__String *)msgin;
-      char* data = (char*)msg->data.data;
-      if (strncmp(data, "POWER:",6) == 0){
-       float power_val = atof(data + 6);
-       depositor_motor.set_control_frame(control_mode::Duty_Cycle_Set,power_val);
+      const std_msgs__msg__Float32 * msg = (const std_msgs__msg__Float32 *)msgin;
+      if(msg != NULL){
+        depositor_motor.set_control_frame(msg->data);
       }
       else{
-        depositor_motor.set_control_frame(control_mode::Duty_Cycle_Set,power_val);
+        depositor_motor.set_control_frame(0.0);
 
       }
 }
 void actuator_voltage_callback(const void * msgin) {
     const std_msgs__msg__Float32 * msg = (const std_msgs__msg__Float32 *)msgin;
     if (msg != NULL) {
-        float power = msg->data / 12.0; 
-        
-        
-        if (power > 1.0) power = 1.0;
-        if (power < -1.0) power = -1.0;
+       float target_voltage = msg->data;
+        if (target_voltage > 12.0) target_voltage = 12.0;
+        if (target_voltage < -12.0) target_voltage = -12.0;
 
-        excavator_motor.set_control_frame(control_mode::Duty_Cycle_Set, power);
+        actuator.set_control_frame(control_mode::Voltage_Set, target_voltage);
     }
 }
 void vibrator_callback(const void * msgin) {
@@ -473,7 +486,7 @@ void setup_subscribers(){
     RCCHECK(rclc_subscription_init_default(
     &depositor_subscriber,
     &node,
-    ROSIDL_GET_MSG_TYPE_SUPPORT(std_msgs, msg, String),
+    ROSIDL_GET_MSG_TYPE_SUPPORT(std_msgs, msg, Float32),
     "/depositor/status"));
 
     // create a subscriber for actuator voltage and vibrator
@@ -539,6 +552,11 @@ void setup_CAN(){
   // excavator motor
   CANCHECK(excavator_motor.initialize_SPARK_MAX(CAN_Helper, CAN0));
   CAN_Helper.add_to_CAN_dev_arr(&excavator_motor);
+
+  // actuator 
+  // excavator motor
+  CANCHECK(actuator.initialize_SPARK_MAX(CAN_Helper, CAN0));
+  CAN_Helper.add_to_CAN_dev_arr(&actuator);
 
 
   

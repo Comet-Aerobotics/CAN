@@ -7,12 +7,14 @@ For actual hardware integration, replace with proper ROS 2 ActionServer.
 """
 import time
 from enum import Enum, auto
-
+import asyncio
 import rclpy
 from rclpy.node import Node
-from rclpy.executors import MultiThreadedExecutor
+from rclpy.executors import MultiThreadedExecutorfrom rclpy.action.server import ServerGoalHandle
+from custom_messages.action import Excavate
 from rclpy.action import ActionServer
 from std_msgs.msg import Float32, Bool
+from custom_messages.msg import RobotStatusMessage
 
 
 class ExcavatorState(Enum):
@@ -36,7 +38,6 @@ class ExcavatorActionServer(Node):
         )
 
         # Parameters
-        self.declare_parameter('dig_rate_kg_per_sec', 1.0)
         self.declare_parameter('bucket_capacity_kg', 5.0)
         self.declare_parameter('simulation_mode', True)
         self.declare_parameter('max_current_limit', 5)
@@ -61,17 +62,20 @@ class ExcavatorActionServer(Node):
         )
         # Subscriber to current sensor
         self.current_sub = self.create_subscription(
-            Float32,
-            '/motor/current',
-            self.current_callback,
-            10,
+            RobotStatusMessage,
+            'robot_data',
+            self.robot_status_callback,
+            10
         )
 
         #publishers
         self.actuator_voltage = self.create_publisher(Float32, '/hardware/actuator_voltage', 10)
         self.vibrator = self.create_publisher(Bool, '/hardware/vibrator', 10)
 
-        self.get_logger().info('Excavator stub initialized (simulation mode)')
+        self.get_logger().info('Excavator initialized')
+    def robot_status_callback(self, msg):
+        # Extract current from the excavator Spark Max message
+        self.motor_amps = msg.excavator.current
     def stop_all(self):
         """Emergency stop helper for all moving parts."""
         self.actuator_voltage.publish(Float32(data=0.0))
@@ -91,6 +95,11 @@ class ExcavatorActionServer(Node):
         duration = goal_handle.request.dig_duration_sec
 
         while rclpy.ok():
+            if goal_handle.is_cancel_requested:
+                self.stop_all()
+                goal_handle.canceled()
+                result.success = False
+                return result
             now = self.get_clock().now()
             elapsed_sec = (now - start_time).nanoseconds / 1e9
 
@@ -107,9 +116,9 @@ class ExcavatorActionServer(Node):
             if self.laser_tripped == True:
                 self.actuator_voltage.publish(Float32(data=0.0))
                 self.vibrator.publish(Bool(data=True))
-                time.sleep(3)
+                await asyncio.sleep(3.0)
                 self.vibrator.publish(Bool(data=False))
-                time.sleep(0.5)
+                await asyncio.sleep(0.5)
                 if self.laser_tripped == True:
                     self.stop_all()
                     goal_handle.succeed()
@@ -122,6 +131,7 @@ class ExcavatorActionServer(Node):
                 feedback.laser_tripped = self.laser_tripped
                 feedback.estimated_time_remaining = int(max(0, duration - elapsed_sec))
                 goal_handle.publish_feedback(feedback)
+            await asyncio.sleep(0.1)
 
             time.sleep(0.1)
         self.stop_all()

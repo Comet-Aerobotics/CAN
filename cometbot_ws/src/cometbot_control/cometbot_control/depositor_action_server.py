@@ -15,7 +15,7 @@ from cometbot_control.action import Deposit
 from rclpy.action import ActionClient
 from rclpy.action import ActionServer
 from rclpy.action.server import ServerGoalHandle;
-from std_msgs.msg import String
+from std_msgs.msg import Float32
 from custom_messages.msg import RobotStatusMessage
 
 
@@ -26,7 +26,7 @@ class DepositorState(Enum):
 
 
 class DepositorActionServer(Node):
-    """Stub depositor node that simulates material deposit."""
+   
 
     def __init__(self):
         super().__init__('depositor_action_server')
@@ -38,7 +38,7 @@ class DepositorActionServer(Node):
         self.latest_motor_data = None
   
          # Status publisher (for visualization/debugging)
-        self.status_pub = self.create_publisher(String, '/depositor/status', 10)
+        self.motor_command_pub = self.create_publisher(Float32, '/depositor/status', 10)
         self.create_subscription(RobotStatusMessage, 'robot_data', self.motor_data_callback, 10)
         self.depositor_action_server_ = ActionServer(
             self, 
@@ -48,7 +48,7 @@ class DepositorActionServer(Node):
              )
          # State
         self.state = DepositorState.IDLE
-        self.get_logger().info('Depositor stub initialized (simulation mode)')
+        self.get_logger().info('Depositor initialized')
         
     def motor_data_callback(self, msg):
         self.latest_motor_data = msg
@@ -85,7 +85,15 @@ class DepositorActionServer(Node):
             if goal_handle.is_cancel_requested:
                 self.stop_motor()
                 goal_handle.canceled()
+                result.success = False
+                result.material_deposited_kg = total_mass_deposited
                 return result
+
+            # to prevent the motor running forever if mass isn't reached
+            elapsed_time = (self.get_clock().now() - start_time).nanoseconds / 1e9
+            if elapsed_time > self.max_time:
+                self.get_logger().warn("Exceeded max deposit time! Aborting.")
+                break
 
             # Pull sensor data
             motor_vel = self.latest_motor_data.depositor_motor.velocity
@@ -102,12 +110,11 @@ class DepositorActionServer(Node):
             
             # Mass Calculation
             if motion_detected:
-                total_mass_deposited += (current_power * motor_current * MASS_MAGIC_NUMBER * 0.1)
-
+                total_mass_deposited += (current_power * abs(motor_current) * MASS_MAGIC_NUMBER * 0.1)
             # Publish message with power
-            cmd_msg = String()
-            cmd_msg.data = f"POWER:{current_power:.2f}"
-            self.status_pub.publish(cmd_msg)
+            cmd_msg = Float32()
+            cmd_msg.data = float(current_power)
+            self.motor_command_pub.publish(cmd_msg)
 
             # Feedback
             feedback_msg.current_progress_kg = total_mass_deposited
