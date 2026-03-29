@@ -10,8 +10,9 @@ from enum import Enum, auto
 import asyncio
 import rclpy
 from rclpy.node import Node
-from rclpy.executors import MultiThreadedExecutorfrom rclpy.action.server import ServerGoalHandle
-from custom_messages.action import Excavate
+from rclpy.executors import MultiThreadedExecutor
+from rclpy.action.server import ServerGoalHandle
+from cometbot_control.action import Excavate
 from rclpy.action import ActionServer
 from std_msgs.msg import Float32, Bool
 from custom_messages.msg import RobotStatusMessage
@@ -88,7 +89,7 @@ class ExcavatorActionServer(Node):
 
     
 
-    def execute_callback(self, goal_handle: ServerGoalHandle):
+    async def execute_callback(self, goal_handle: ServerGoalHandle):
         result = Excavate.Result()
         feedback = Excavate.Feedback()
         start_time = self.get_clock().now()
@@ -133,7 +134,7 @@ class ExcavatorActionServer(Node):
                 goal_handle.publish_feedback(feedback)
             await asyncio.sleep(0.1)
 
-            time.sleep(0.1)
+            
         self.stop_all()
         goal_handle.succeed()
         result.success = True

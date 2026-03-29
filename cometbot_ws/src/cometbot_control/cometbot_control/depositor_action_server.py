@@ -54,8 +54,8 @@ class DepositorActionServer(Node):
         self.latest_motor_data = msg
 
     def stop_motor(self):
-        msg = String()
-        msg.data = "POWER:0.00"
+        msg = Float32()
+        msg.data = 0.0
         self.status_pub.publish(msg)
 
     async def execute_callback(self, goal_handle: ServerGoalHandle):

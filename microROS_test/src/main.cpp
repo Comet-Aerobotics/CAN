@@ -102,6 +102,7 @@ const char * microros_ns = "";
 /*
  * Timers
  */
+rcl_timer_t vibration_timer;
 rcl_timer_t robot_status_timer;
 rcl_timer_t CAN_core_timer;
 rcl_timer_t read_timer;
@@ -201,18 +202,26 @@ void robot_status_timer_callback(rcl_timer_t * timer, int64_t last_call_time) {
     update_robot_data_from_Spark_Max(robot_data.depositor, &depositor_motor);
      
 
-    // vibrator wiggle logic
-   if (vibrator_msg.data) {
-    
-    float wiggle_magnitude = 0.25; 
-    float wiggle = (millis() % 50 < 25) ? wiggle_magnitude : -wiggle_magnitude;
-    
-    excavator_motor.set_control_frame(control_mode::Duty_Cycle_Set, wiggle);
-  }
+
 
   RCSOFTCHECK(rcl_publish(&robot_data_publisher, &robot_data, NULL));
   laser_msg.data = (digitalRead(LASER_PIN) == LOW); 
   RCSOFTCHECK(rcl_publish(&laser_status_publisher, &laser_msg, NULL));
+  }
+}
+
+void vibration_timer_callback(rcl_timer_t * timer, int64_t last_call_time) {
+  RCLC_UNUSED(last_call_time);
+  if (timer != NULL && enabled.data) {
+    if (vibrator_msg.data) {
+      float wiggle_magnitude = 0.25; 
+      // Toggle every 25ms
+      float wiggle = (millis() % 50 < 25) ? wiggle_magnitude : -wiggle_magnitude;
+      actuator.set_control_frame(control_mode::Duty_Cycle_Set, wiggle);
+    }
+    else{
+      actuator.set_control_frame(control_mode::Duty_Cycle_Set, 0.0);
+    }
   }
 }
 
@@ -435,6 +444,13 @@ void setup_timers(){
     &support,
     RCL_MS_TO_NS(10),             // was 25ms
     read_callback));
+
+    // Timer for reading from CAN buffer
+  RCCHECK(rclc_timer_init_default(
+    &vibrator_timer,
+    &support,
+    RCL_MS_TO_NS(25),             // was 25ms
+    vibration_timer_callback));
 }
 
 /*
@@ -497,7 +513,7 @@ void setup_subscribers(){
     "/hardware/actuator_voltage"));
 
 RCCHECK(rclc_subscription_init_default(
-    &vibrator_subscriber,
+    &vibration_subscriber,
     &node,
     ROSIDL_GET_MSG_TYPE_SUPPORT(std_msgs, msg, Bool),
     "/hardware/vibrator"));
@@ -510,10 +526,11 @@ RCCHECK(rclc_subscription_init_default(
 void setup_executor(){
   // Create an executor, set number of handles, and add handles
   // Order added defines execution hierarchy (FIFO)
-  RCCHECK(rclc_executor_init(&executor, &support.context, 10, &allocator));
+  RCCHECK(rclc_executor_init(&executor, &support.context, 11, &allocator));
   RCCHECK(rclc_executor_add_timer(&executor, &CAN_core_timer));
   RCCHECK(rclc_executor_add_timer(&executor, &robot_status_timer));
   RCCHECK(rclc_executor_add_timer(&executor, &read_timer));
+  RCCHECK(rclc_executor_add_timer(&executor, &vibration_timer));
   RCCHECK(rclc_executor_add_subscription(&executor, &cmd_vel_subscriber, &cmd_vel, cmd_vel_callback, ON_NEW_DATA)); // or ALWAYS
   RCCHECK(rclc_executor_add_subscription(&executor, &enabled_subscriber, &enabled, enabled_callback, ALWAYS)); // or ALWAYS
   RCCHECK(rclc_executor_add_subscription(&executor, &depositor_subscriber, &depositor_status, depositor_callback, ON_NEW_DATA)); 
