@@ -11,12 +11,12 @@ import asyncio
 import rclpy
 from rclpy.node import Node
 from rclpy.executors import MultiThreadedExecutor
-from cometbot_control.action import Deposit 
+from cometbot_msgs.action import Deposit 
 from rclpy.action import ActionClient
 from rclpy.action import ActionServer
 from rclpy.action.server import ServerGoalHandle;
 from std_msgs.msg import Float32
-from custom_messages.msg import RobotStatusMessage
+from cometbot_msgs.msg import RobotStatusMessage
 
 
 class DepositorState(Enum):
@@ -96,9 +96,8 @@ class DepositorActionServer(Node):
                 break
 
             # Pull sensor data
-            motor_vel = self.latest_motor_data.depositor_motor.velocity
-            motor_current = self.latest_motor_data.depositor_motor.current
-
+            
+            motor_current = self.latest_motor_data.depositor_current
             # Ramping
             if not motion_detected:
                 if abs(motor_vel) > VELOCITY_THRESHOLD:

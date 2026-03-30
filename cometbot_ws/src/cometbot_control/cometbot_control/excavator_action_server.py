@@ -12,11 +12,10 @@ import rclpy
 from rclpy.node import Node
 from rclpy.executors import MultiThreadedExecutor
 from rclpy.action.server import ServerGoalHandle
-from cometbot_control.action import Excavate
+from cometbot_msgs.action import Excavate
 from rclpy.action import ActionServer
 from std_msgs.msg import Float32, Bool
-from custom_messages.msg import RobotStatusMessage
-
+from cometbot_msgs.msg import RobotStatusMessage
 
 class ExcavatorState(Enum):
     IDLE = auto()
@@ -42,6 +41,7 @@ class ExcavatorActionServer(Node):
         self.declare_parameter('bucket_capacity_kg', 5.0)
         self.declare_parameter('simulation_mode', True)
         self.declare_parameter('max_current_limit', 5)
+        self.declare_parameter('dig_rate_kg_per_sec', 1.0)
 
         self.dig_rate = float(self.get_parameter('dig_rate_kg_per_sec').value)
         self.bucket_capacity = float(self.get_parameter('bucket_capacity_kg').value)
@@ -76,7 +76,7 @@ class ExcavatorActionServer(Node):
         self.get_logger().info('Excavator initialized')
     def robot_status_callback(self, msg):
         # Extract current from the excavator Spark Max message
-        self.motor_amps = msg.excavator.current
+        self.motor_amps = msg.excavator_current
     def stop_all(self):
         """Emergency stop helper for all moving parts."""
         self.actuator_voltage.publish(Float32(data=0.0))
