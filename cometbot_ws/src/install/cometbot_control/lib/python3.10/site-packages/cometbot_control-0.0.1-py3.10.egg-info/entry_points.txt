@@ -1,7 +1,0 @@
-[console_scripts]
-depositor_action_server = cometbot_control.depositor_action_server:main
-excavator_action_server = cometbot_control.excavator_action_server:main
-load_sensor = cometbot_control.sensors.load_sensor:main
-mission_orchestrator = cometbot_control.mission_orchestrator:main
-teleop_publisher = cometbot_control.teleop_publisher:main
-
