@@ -1,5 +1,70 @@
 microROS_test/old_code/*
-/build/*
-/cometbot_ws/build/*
-/cometbot_ws/log/*
-/cometbot_ws/install/*
+
+# General build / colcon outputs
+build/
+install/
+log/
+
+# Workspace-specific (explicit for clarity)
+cometbot_ws/build/
+cometbot_ws/install/
+cometbot_ws/log/
+cometbot_ws/src/build/
+cometbot_ws/src/log/
+
+# CMake
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+compile_commands.json
+CTestTestfile.cmake
+CTestCustom.cmake
+CTestConfiguration.ini
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyc
+*.pyo
+*.pyd
+*.pdb
+*.egg-info/
+dist/
+pip-wheel-metadata/
+venv/
+.venv/
+env/
+ENV/
+pyvenv.cfg
+.Python
+.mypy_cache/
+.pytest_cache/
+.coverage
+coverage.xml
+htmlcov/
+
+# PlatformIO / Arduino
+.pio/
+.pioenvs/
+.platformio/
+*.elf
+*.hex
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Misc
+*.log
+*.tmp
+*.bak
+*.swp
+*~
+
+# Node
+node_modules/
+npm-debug.log
+
+# Cache
+.cache/
