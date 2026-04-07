@@ -1,3 +1,7 @@
 bool enabled
 custom_messages/SparkMaxMessage left_drivebase
 custom_messages/SparkMaxMessage right_drivebase
+custom_messages/SparkMaxMessage excavator
+custom_messages/SparkMaxMessage depositor
+float32 excavator_current
+float32 depositor_current

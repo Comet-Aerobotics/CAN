@@ -6,8 +6,8 @@ This is a simplified placeholder that simulates excavator control.
 For actual hardware integration, replace with proper ROS 2 ActionServer.
 """
 import time
+import threading
 from enum import Enum, auto
-import asyncio
 import rclpy
 from rclpy.node import Node
 from rclpy.executors import MultiThreadedExecutor
@@ -16,6 +16,51 @@ from cometbot_msgs.action import Excavate
 from rclpy.action import ActionServer
 from std_msgs.msg import Float32, Bool
 from cometbot_msgs.msg import RobotStatusMessage
+
+
+def _extract_currents(msg):
+    """Return (excavator_current, depositor_current) if available from different message shapes.
+
+    Supports common variants:
+    - cometbot_msgs/RobotStatusMessage: flat `excavator_current`, `depositor_current`
+    - custom_messages/RobotStatusMessage: nested `excavator`/`depositor` or
+      `left_drivebase`/`right_drivebase` with `.current` field
+    """
+    exc = None
+    dep = None
+    # flat fields
+    if hasattr(msg, 'excavator_current'):
+        try:
+            exc = float(msg.excavator_current)
+        except Exception:
+            exc = None
+    if hasattr(msg, 'depositor_current'):
+        try:
+            dep = float(msg.depositor_current)
+        except Exception:
+            dep = None
+
+    # nested fields fallback
+    if exc is None:
+        for name in ('excavator', 'left_drivebase'):
+            nested = getattr(msg, name, None)
+            if nested is not None and hasattr(nested, 'current'):
+                try:
+                    exc = float(nested.current)
+                    break
+                except Exception:
+                    pass
+    if dep is None:
+        for name in ('depositor', 'right_drivebase'):
+            nested = getattr(msg, name, None)
+            if nested is not None and hasattr(nested, 'current'):
+                try:
+                    dep = float(nested.current)
+                    break
+                except Exception:
+                    pass
+
+    return exc, dep
 
 class ExcavatorState(Enum):
     IDLE = auto()
@@ -53,6 +98,8 @@ class ExcavatorActionServer(Node):
         # State
         self.state = ExcavatorState.IDLE
         self._current_weight = 0.0
+        self._latest_excavator_current = None
+        self._latest_depositor_current = None
 
         # Subscriber to laser sensor
         self.laser_sub = self.create_subscription(
@@ -71,16 +118,18 @@ class ExcavatorActionServer(Node):
 
         #publishers
         self.actuator_voltage = self.create_publisher(Float32, '/hardware/actuator_voltage', 10)
-        self.vibrator = self.create_publisher(Bool, '/hardware/vibrator', 10)
+        
 
         self.get_logger().info('Excavator initialized')
     def robot_status_callback(self, msg):
-        # Extract current from the excavator Spark Max message
-        self.motor_amps = msg.excavator_current
+        # Extract excavator current from incoming robot_data (supports multiple message shapes)
+        exc, dep = _extract_currents(msg)
+        if exc is not None:
+            self.motor_amps = exc
+            self._latest_excavator_current = exc
     def stop_all(self):
         """Emergency stop helper for all moving parts."""
         self.actuator_voltage.publish(Float32(data=0.0))
-        self.vibrator.publish(Bool(data=False))
     def laser_callback(self, msg):
         self.laser_tripped = msg.data
     
@@ -89,58 +138,96 @@ class ExcavatorActionServer(Node):
 
     
 
-    async def execute_callback(self, goal_handle: ServerGoalHandle):
+    def execute_callback(self, goal_handle: ServerGoalHandle):
         result = Excavate.Result()
         feedback = Excavate.Feedback()
         start_time = self.get_clock().now()
-        duration = goal_handle.request.dig_duration_sec
+        duration = float(goal_handle.request.dig_duration_sec)
 
-        while rclpy.ok():
+        done = threading.Event()
+
+        # state for vibration sequence
+        state = {
+            'phase': 'digging',
+            'vibration_end': None,
+            'pause_end': None,
+        }
+
+        def timer_cb():
+            if not rclpy.ok():
+                done.set()
+                return
+
             if goal_handle.is_cancel_requested:
                 self.stop_all()
                 goal_handle.canceled()
                 result.success = False
-                return result
+                done.set()
+                return
+
             now = self.get_clock().now()
             elapsed_sec = (now - start_time).nanoseconds / 1e9
 
-            if elapsed_sec >= duration: 
-                break
+            # timeout complete
+            if elapsed_sec >= duration:
+                self.stop_all()
+                goal_handle.succeed()
+                result.success = True
+                result.is_full = False
+                result.time_spent = elapsed_sec
+                done.set()
+                return
 
+            # overcurrent -> abort
             if self.motor_amps > self.max_limit:
                 self.stop_all()
                 goal_handle.abort()
                 result.success = False
                 result.is_full = False
                 result.time_spent = elapsed_sec
-                return result
-            if self.laser_tripped == True:
-                self.actuator_voltage.publish(Float32(data=0.0))
-                self.vibrator.publish(Bool(data=True))
-                await asyncio.sleep(3.0)
-                self.vibrator.publish(Bool(data=False))
-                await asyncio.sleep(0.5)
-                if self.laser_tripped == True:
-                    self.stop_all()
-                    goal_handle.succeed()
-                    result.success = True
-                    result.is_full = True
-                    result.time_spent = elapsed_sec
-                    return result
+                done.set()
+                return
+
+            # laser tripped handling (non-blocking state machine)
+            if self.laser_tripped:
+                if state['phase'] == 'digging':
+                    self.actuator_voltage.publish(Float32(data=0.0))
+                    state['vibration_end'] = (now.nanoseconds / 1e9) + 3.0
+                    state['phase'] = 'vibrating'
+                    return
+                elif state['phase'] == 'vibrating':
+                    if (now.nanoseconds / 1e9) >= state['vibration_end']:
+                        state['pause_end'] = (now.nanoseconds / 1e9) + 0.5
+                        state['phase'] = 'pause'
+                        return
+                elif state['phase'] == 'pause':
+                    if (now.nanoseconds / 1e9) >= state['pause_end']:
+                        if self.laser_tripped:
+                            self.stop_all()
+                            goal_handle.succeed()
+                            result.success = True
+                            result.is_full = True
+                            result.time_spent = elapsed_sec
+                            done.set()
+                            return
+                        else:
+                            state['phase'] = 'digging'
+                            return
             else:
+                state['phase'] = 'digging'
                 self.actuator_voltage.publish(Float32(data=12.0))
                 feedback.laser_tripped = self.laser_tripped
                 feedback.estimated_time_remaining = int(max(0, duration - elapsed_sec))
                 goal_handle.publish_feedback(feedback)
-            await asyncio.sleep(0.1)
 
-            
-        self.stop_all()
-        goal_handle.succeed()
-        result.success = True
-        result.is_full = False
-        result.time_spent = elapsed_sec
-        return result    
+        timer = self.create_timer(0.1, timer_cb)
+        done.wait()
+        try:
+            self.destroy_timer(timer)
+        except Exception:
+            pass
+
+        return result
 
             
 
