@@ -3,3 +3,6 @@ microROS_test/old_code/*
 /cometbot_ws/build/*
 /cometbot_ws/log/*
 /cometbot_ws/install/*
+cometbot_ws/src/log/*
+cometbot_ws/src/build/*
+cometbot_ws/src/install/*
