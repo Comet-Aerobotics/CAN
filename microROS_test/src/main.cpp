@@ -24,6 +24,7 @@
 #include <rclc/rclc.h>
 #include <rclc/executor.h>
 #include <std_msgs/msg/bool.h>
+#include <std_msgs/msg/float32.h>
 #include <std_msgs/msg/string.h>
 #include <geometry_msgs/msg/twist.h>
 #include <SPI.h>
@@ -80,8 +81,8 @@ std_msgs__msg__Float32 depositor_msg;
 rcl_subscription_t excavator_subscriber;
 rcl_subscription_t enabled_subscriber;
 std_msgs__msg__Bool enabled;
-std_msgs__msg__String excavator_status; 
-
+std_msgs__msg__String excavator_status;
+std_msgs__msg__String depositor_status;
 
 rcl_subscription_t actuator_voltage_subscriber;
 std_msgs__msg__Float32 actuator_voltage_msg;
@@ -495,7 +496,7 @@ void setup_executor(){
   RCCHECK(rclc_executor_add_timer(&executor, &read_timer));
   RCCHECK(rclc_executor_add_subscription(&executor, &cmd_vel_subscriber, &cmd_vel, cmd_vel_callback, ON_NEW_DATA)); // or ALWAYS
   RCCHECK(rclc_executor_add_subscription(&executor, &enabled_subscriber, &enabled, enabled_callback, ALWAYS)); // or ALWAYS
-  RCCHECK(rclc_executor_add_subscription(&executor, &depositor_subscriber, &depositor_status, depositor_callback, ON_NEW_DATA)); 
+  RCCHECK(rclc_executor_add_subscription(&executor, &depositor_subscriber, &depositor_msg, depositor_callback, ON_NEW_DATA)); 
   RCCHECK(rclc_executor_add_subscription(&executor, &actuator_voltage_subscriber, &actuator_voltage_msg, actuator_voltage_callback, ON_NEW_DATA));
 
 
