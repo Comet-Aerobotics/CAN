@@ -36,7 +36,6 @@
 
 // I put random pin values change later
 #define LASER_PIN 5
-#define VIBRATOR_PIN 6
 
 /*
  * Function Prototypes
@@ -87,9 +86,6 @@ std_msgs__msg__String excavator_status;
 rcl_subscription_t actuator_voltage_subscriber;
 std_msgs__msg__Float32 actuator_voltage_msg;
 
-rcl_subscription_t vibrator_subscriber;
-std_msgs__msg__Bool vibrator_msg;
-
 /*
  * ROS Core
  */
@@ -102,7 +98,6 @@ const char * microros_ns = "";
 /*
  * Timers
  */
-rcl_timer_t vibration_timer;
 rcl_timer_t robot_status_timer;
 rcl_timer_t CAN_core_timer;
 rcl_timer_t read_timer;
@@ -210,20 +205,7 @@ void robot_status_timer_callback(rcl_timer_t * timer, int64_t last_call_time) {
   }
 }
 
-void vibration_timer_callback(rcl_timer_t * timer, int64_t last_call_time) {
-  RCLC_UNUSED(last_call_time);
-  if (timer != NULL && enabled.data) {
-    if (vibrator_msg.data) {
-      float wiggle_magnitude = 0.25; 
-      // Toggle every 25ms
-      float wiggle = (millis() % 50 < 25) ? wiggle_magnitude : -wiggle_magnitude;
-      actuator.set_control_frame(control_mode::Duty_Cycle_Set, wiggle);
-    }
-    else{
-      actuator.set_control_frame(control_mode::Duty_Cycle_Set, 0.0);
-    }
-  }
-}
+// Vibration timer removed
 
 /*
  * Timer callback function to be called periodically
@@ -360,12 +342,7 @@ void actuator_voltage_callback(const void * msgin) {
         actuator.set_control_frame(control_mode::Voltage_Set, target_voltage);
     }
 }
-void vibrator_callback(const void * msgin) {
-    const std_msgs__msg__Bool * msg = (const std_msgs__msg__Bool *)msgin;
-    if (msg != NULL) {
-        digitalWrite(VIBRATOR_PIN, msg->data ? HIGH : LOW);
-    }
-}
+ 
 
 
 
@@ -395,7 +372,6 @@ void setup() {
   pinMode(LED, OUTPUT);  // Set LED_PIN as output
   digitalWrite(LED, HIGH);  // Turn on the LED
   pinMode(LASER_PIN, INPUT_PULLUP);
-  pinMode(VIBRATOR_PIN, OUTPUT);
   
   setup_CAN();
   
@@ -444,13 +420,6 @@ void setup_timers(){
     &support,
     RCL_MS_TO_NS(10),             // was 25ms
     read_callback));
-
-    // Timer for reading from CAN buffer
-  RCCHECK(rclc_timer_init_default(
-    &vibrator_timer,
-    &support,
-    RCL_MS_TO_NS(25),             // was 25ms
-    vibration_timer_callback));
 }
 
 /*
@@ -505,18 +474,12 @@ void setup_subscribers(){
     ROSIDL_GET_MSG_TYPE_SUPPORT(std_msgs, msg, Float32),
     "/depositor/status"));
 
-    // create a subscriber for actuator voltage and vibrator
+    // create a subscriber for actuator voltage
     RCCHECK(rclc_subscription_init_default(
     &actuator_voltage_subscriber,
     &node,
     ROSIDL_GET_MSG_TYPE_SUPPORT(std_msgs, msg, Float32),
     "/hardware/actuator_voltage"));
-
-RCCHECK(rclc_subscription_init_default(
-    &vibration_subscriber,
-    &node,
-    ROSIDL_GET_MSG_TYPE_SUPPORT(std_msgs, msg, Bool),
-    "/hardware/vibrator"));
 
 }
 
@@ -530,12 +493,10 @@ void setup_executor(){
   RCCHECK(rclc_executor_add_timer(&executor, &CAN_core_timer));
   RCCHECK(rclc_executor_add_timer(&executor, &robot_status_timer));
   RCCHECK(rclc_executor_add_timer(&executor, &read_timer));
-  RCCHECK(rclc_executor_add_timer(&executor, &vibration_timer));
   RCCHECK(rclc_executor_add_subscription(&executor, &cmd_vel_subscriber, &cmd_vel, cmd_vel_callback, ON_NEW_DATA)); // or ALWAYS
   RCCHECK(rclc_executor_add_subscription(&executor, &enabled_subscriber, &enabled, enabled_callback, ALWAYS)); // or ALWAYS
   RCCHECK(rclc_executor_add_subscription(&executor, &depositor_subscriber, &depositor_status, depositor_callback, ON_NEW_DATA)); 
   RCCHECK(rclc_executor_add_subscription(&executor, &actuator_voltage_subscriber, &actuator_voltage_msg, actuator_voltage_callback, ON_NEW_DATA));
-  RCCHECK(rclc_executor_add_subscription(&executor, &vibrator_subscriber, &vibrator_msg, vibrator_callback, ON_NEW_DATA));
 
 
 }
