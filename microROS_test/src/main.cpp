@@ -193,10 +193,10 @@ void robot_status_timer_callback(rcl_timer_t * timer, int64_t last_call_time) {
   RCLC_UNUSED(last_call_time);  // Prevent unused variable warning
   if (timer != NULL) {
     robot_data.enabled = enabled.data;
-    update_robot_data_from_Spark_Max(robot_data.left_drivebase, &drive_base_left);
-    log_logging(drive_base_left.to_string().c_str());
-    update_robot_data_from_Spark_Max(robot_data.right_drivebase, &drive_base_right);
-    log_logging(drive_base_right.to_string().c_str());
+    // update_robot_data_from_Spark_Max(robot_data.left_drivebase, &drive_base_left);
+    // log_logging(drive_base_left.to_string().c_str());
+    // update_robot_data_from_Spark_Max(robot_data.right_drivebase, &drive_base_right);
+    // log_logging(drive_base_right.to_string().c_str());
     update_robot_data_from_Spark_Max(robot_data.excavator, &excavator_motor);
     update_robot_data_from_Spark_Max(robot_data.depositor, &depositor_motor);
      
@@ -567,19 +567,19 @@ void setup_CAN(){
  */
 void initialize_vars(){
   robot_data.enabled = false;
-  robot_data.left_drivebase.applied_output = 0.0;
-  robot_data.left_drivebase.current = 0.0;
-  robot_data.left_drivebase.device_id = 0;
-  robot_data.left_drivebase.position = 0.0;
-  robot_data.left_drivebase.velocity = 0.0;
-  robot_data.left_drivebase.voltage = 0.0;
+  // robot_data.left_drivebase.applied_output = 0.0;
+  // robot_data.left_drivebase.current = 0.0;
+  // robot_data.left_drivebase.device_id = 0;
+  // robot_data.left_drivebase.position = 0.0;
+  // robot_data.left_drivebase.velocity = 0.0;
+  // robot_data.left_drivebase.voltage = 0.0;
   
-  robot_data.right_drivebase.applied_output = 0.0;
-  robot_data.right_drivebase.current = 0.0;
-  robot_data.right_drivebase.device_id = 0;
-  robot_data.right_drivebase.position = 0.0;
-  robot_data.right_drivebase.velocity = 0.0;
-  robot_data.right_drivebase.voltage = 0.0;
+  // robot_data.right_drivebase.applied_output = 0.0;
+  // robot_data.right_drivebase.current = 0.0;
+  // robot_data.right_drivebase.device_id = 0;
+  // robot_data.right_drivebase.position = 0.0;
+  // robot_data.right_drivebase.velocity = 0.0;
+  // robot_data.right_drivebase.voltage = 0.0;
 
 
   logger.data.size = 100;
