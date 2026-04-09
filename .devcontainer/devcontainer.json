@@ -26,6 +26,12 @@
   "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached",
   "postCreateCommand": "bash .devcontainer/postCreate.sh",
   "remoteUser": "vscode",
+  "runArgs": [
+    "--device=/dev/ttyUSB0:/dev/ttyUSB0",
+    "--device=/dev/ttyACM0:/dev/ttyACM0",
+    "--device=/dev/bus/usb:/dev/bus/usb",
+    "--privileged"
+  ],
   "containerEnv": {
     "ROS_DISTRO": "humble",
     "DEBIAN_FRONTEND": "noninteractive"

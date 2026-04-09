@@ -78,7 +78,7 @@ const int ACTUATOR_CAN_ID = 15;
 rcl_subscription_t cmd_vel_subscriber;
 geometry_msgs__msg__Twist cmd_vel;
 rcl_subscription_t depositor_subscriber;
-std_msgs__msg__String depositor_msg;
+std_msgs__msg__Float32 depositor_msg;
 rcl_subscription_t excavator_subscriber;
 rcl_subscription_t enabled_subscriber;
 std_msgs__msg__Bool enabled;
@@ -587,13 +587,8 @@ void initialize_vars(){
   enabled.data = true; // Change to false by default once web GUI has been built (ONLY FOR TESTING)
   // may need to use something like std_msgs__msg__String__fini(&sub_msg); for messages that are arrays 
 
-  static char incoming_status_buffer_depositor[50];
-  depositor_msg.data.data = incoming_status_buffer_depositor;
-  depositor_msg.data.capacity = 50; 
-
-
-    static char incoming_status_buffer_excavator[50];
-  excavator_status.data.data = incoming_status_buffer_excavator;
-  excavator_status.data.capacity = 50;
+  // Float32 messages don't need buffer initialization
+  depositor_msg.data = 0.0;
+  actuator_voltage_msg.data = 0.0;
 
 }

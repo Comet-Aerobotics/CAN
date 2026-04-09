@@ -54,9 +54,9 @@ class DepositorActionServer(Node):
         self.latest_motor_data = msg
 
     def stop_motor(self):
-        msg = String()
-        msg.data = "POWER:0.00"
-        self.status_pub.publish(msg)
+        msg = Float32()
+        msg.data = 0.0
+        self.motor_command_pub.publish(msg)
 
     async def execute_callback(self, goal_handle: ServerGoalHandle):
         
@@ -71,6 +71,8 @@ class DepositorActionServer(Node):
         result = Deposit.Result()
         feedback_msg = Deposit.Feedback()
         
+        start_time = self.get_clock().now()
+        self.max_time = float(self.get_parameter('max_deposit_time_sec').value)
         current_power = 0.05
         total_mass_deposited = 0.0
         motion_detected = False
@@ -96,8 +98,8 @@ class DepositorActionServer(Node):
                 break
 
             # Pull sensor data
-            motor_vel = self.latest_motor_data.depositor_motor.velocity
-            motor_current = self.latest_motor_data.depositor_motor.current
+            motor_vel = self.latest_motor_data.depositor.velocity
+            motor_current = self.latest_motor_data.depositor.current
 
             # Ramping
             if not motion_detected:

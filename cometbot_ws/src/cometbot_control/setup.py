@@ -25,6 +25,7 @@ setup(
             'excavator_action_server = cometbot_control.excavator_action_server:main',
             'depositor_action_server = cometbot_control.depositor_action_server:main',
             'load_sensor = cometbot_control.sensors.load_sensor:main',
+            'robot_test = cometbot_control.robot_test:main',
         ],
     },
 )

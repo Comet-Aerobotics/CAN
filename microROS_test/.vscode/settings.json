@@ -62,5 +62,6 @@
         "thread": "cpp",
         "typeinfo": "cpp"
     },
-    "cmake.sourceDirectory": "/root/CAN/microROS_test/extra_packages/custom_messages"
+    "cmake.sourceDirectory": "/root/CAN/microROS_test/extra_packages/custom_messages",
+    "python-envs.defaultEnvManager": "ms-python.python:system"
 }

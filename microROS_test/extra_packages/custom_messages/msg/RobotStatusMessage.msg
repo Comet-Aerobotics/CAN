@@ -1,3 +1,3 @@
 bool enabled
-custom_messages/SparkMaxMessage excavator
-custom_messages/SparkMaxMessage depositor
+# custom_messages/SparkMaxMessage left_drivebase
+# custom_messages/SparkMaxMessage right_drivebase
