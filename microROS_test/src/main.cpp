@@ -543,8 +543,8 @@ void setup_CAN(){
   CAN_Helper.send_disabled_heartbeat();
 
   // CAN DEVICES
-  CANCHECK(drive_base_left.initialize_SPARK_MAX(CAN_Helper, CAN0));
-  CANCHECK(drive_base_right.initialize_SPARK_MAX(CAN_Helper, CAN0));
+  // CANCHECK(drive_base_left.initialize_SPARK_MAX(CAN_Helper, CAN0));
+  // CANCHECK(drive_base_right.initialize_SPARK_MAX(CAN_Helper, CAN0));
 
   // depositor motor 
   CANCHECK(depositor_motor.initialize_SPARK_MAX(CAN_Helper, CAN0));
@@ -556,8 +556,8 @@ void setup_CAN(){
 
   // actuator 
   // excavator motor
-  CANCHECK(actuator.initialize_SPARK_MAX(CAN_Helper, CAN0));
-  CAN_Helper.add_to_CAN_dev_arr(&actuator);
+  // CANCHECK(actuator.initialize_SPARK_MAX(CAN_Helper, CAN0));
+  // CAN_Helper.add_to_CAN_dev_arr(&actuator);
 
 
   
