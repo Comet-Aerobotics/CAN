@@ -122,8 +122,8 @@ bool was_enabled = false;
 /*
 * SPARK MAXs
 */
-SPARK_MAX drive_base_left = SPARK_MAX(11);
-SPARK_MAX drive_base_right = SPARK_MAX(10);
+// SPARK_MAX drive_base_left = SPARK_MAX(11);
+// SPARK_MAX drive_base_right = SPARK_MAX(10);
 SPARK_MAX excavator_winch = SPARK_MAX(12);
 
 // depositor motor
@@ -131,7 +131,7 @@ SPARK_MAX depositor_motor = SPARK_MAX(DEPOSITOR_MOTOR_CAN_ID);
 // excavator motor
 SPARK_MAX excavator_motor = SPARK_MAX(EXCAVATOR_MOTOR_CAN_ID);
 // actuator 
-SPARK_MAX actuator = SPARK_MAX(ACTUATOR_CAN_ID);
+// SPARK_MAX actuator = SPARK_MAX(ACTUATOR_CAN_ID);
 
 
 
@@ -232,7 +232,7 @@ void CAN_core_callback(rcl_timer_t * timer, int64_t last_call_time) {
       } else {
         //log_logging("Error Sending Heartbeat...!!!...");
       }
-      drive_base_left.set_control_frame(0.5);
+      // drive_base_left.set_control_frame(0.5);
       //log_logging(CAN_Helper.send_message().c_str());
       CAN_Helper.send_message();
 
@@ -324,8 +324,8 @@ void cmd_vel_callback(const void * msgin) {
 
     right_output = -right_output;
 
-    drive_base_left.set_control_frame(control_mode::Duty_Cycle_Set, left_output);
-    drive_base_right.set_control_frame(control_mode::Duty_Cycle_Set, right_output);
+    // drive_base_left.set_control_frame(control_mode::Duty_Cycle_Set, left_output);
+    // drive_base_right.set_control_frame(control_mode::Duty_Cycle_Set, right_output);
     //snprintf(cmd_vel_string, sizeof(cmd_vel_string), "left_output: [%f ], right_output: [%f ]", left_output, right_output);
     //log_logging(cmd_vel_string);
   }
@@ -335,11 +335,14 @@ void cmd_vel_callback(const void * msgin) {
 void depositor_callback(const void * msgin) {
       const std_msgs__msg__Float32 * msg = (const std_msgs__msg__Float32 *)msgin;
       if(msg != NULL){
-        depositor_motor.set_control_frame(msg->data);
+        char log_msg[64];
+        snprintf(log_msg, sizeof(log_msg), "Depositor power: %.3f", msg->data);
+        log_logging(log_msg);
+        depositor_motor.set_control_frame(control_mode::Duty_Cycle_Set, msg->data);
       }
       else{
-        depositor_motor.set_control_frame(0.0);
-
+        log_logging("Depositor power: 0.0 (NULL msg)");
+        depositor_motor.set_control_frame(control_mode::Duty_Cycle_Set, 0.0);
       }
 }
 void actuator_voltage_callback(const void * msgin) {
@@ -348,8 +351,12 @@ void actuator_voltage_callback(const void * msgin) {
        float target_voltage = msg->data;
         if (target_voltage > 12.0) target_voltage = 12.0;
         if (target_voltage < -12.0) target_voltage = -12.0;
-
-        actuator.set_control_frame(control_mode::Voltage_Set, target_voltage);
+        
+        char log_msg[64];
+        snprintf(log_msg, sizeof(log_msg), "Actuator voltage: %.2fV", target_voltage);
+        log_logging(log_msg);
+        
+        // actuator.set_control_frame(control_mode::Voltage_Set, target_voltage);
     }
 }
 void vibrator_callback(const void * msgin) {
