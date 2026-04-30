@@ -6,3 +6,4 @@ microROS_test/old_code/*
 /cometbot_ws/src/build/*
 /cometbot_ws/src/install/*
 /cometbot_ws/src/log/*
+/py_override/*

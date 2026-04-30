@@ -1,3 +1,6 @@
 bool enabled
 custom_messages/SparkMaxMessage left_drivebase
 custom_messages/SparkMaxMessage right_drivebase
+custom_messages/SparkMaxMessage depositor
+custom_messages/SparkMaxMessage excavator_actuator
+custom_messages/SparkMaxMessage excavator_motor

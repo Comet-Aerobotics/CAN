@@ -1,3 +1,4 @@
 {
-    "cmake.sourceDirectory": "/root/CAN/microROS_test/extra_packages/custom_messages"
+    "cmake.sourceDirectory": "/root/CAN/microROS_test/extra_packages/custom_messages",
+    "python.defaultInterpreterPath": "python3"
 }

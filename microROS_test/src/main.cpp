@@ -24,6 +24,7 @@
 #include <rclc/rclc.h>
 #include <rclc/executor.h>
 #include <std_msgs/msg/bool.h>
+#include <std_msgs/msg/float32.h>
 #include <std_msgs/msg/string.h>
 #include <geometry_msgs/msg/twist.h>
 #include <SPI.h>
@@ -44,6 +45,9 @@ void setup_executor();
 void initialize_vars();
 void setup_CAN();
 void update_robot_data_from_Spark_Max(SPARK_MAX *spark_max);
+void depositor_position_callback(const void * msgin);
+void excavator_actuator_callback(const void * msgin);
+void excavator_motor_callback(const void * msgin);
 
 // Micro ROS
 
@@ -68,6 +72,12 @@ rcl_subscription_t cmd_vel_subscriber;
 geometry_msgs__msg__Twist cmd_vel;
 rcl_subscription_t enabled_subscriber;
 std_msgs__msg__Bool enabled;
+rcl_subscription_t depositor_position_subscriber;
+std_msgs__msg__Float32 depositor_position_command;
+rcl_subscription_t excavator_actuator_subscriber;
+std_msgs__msg__Float32 excavator_actuator_command;
+rcl_subscription_t excavator_motor_subscriber;
+std_msgs__msg__Float32 excavator_motor_command;
 
 /*
  * ROS Core
@@ -102,6 +112,21 @@ bool was_enabled = false;
 */
 SPARK_MAX drive_base_left = SPARK_MAX(11);
 SPARK_MAX drive_base_right = SPARK_MAX(10);
+SPARK_MAX depositor_motor = SPARK_MAX(12);
+SPARK_MAX excavator_actuator = SPARK_MAX(13);
+SPARK_MAX excavator_motor = SPARK_MAX(14);
+
+float depositor_position_target = 0.0f;
+float excavator_actuator_output_target = 0.0f;
+float excavator_motor_velocity_target = 0.0f;
+
+constexpr uint8_t CONTROLLED_SPARK_MAX_COUNT = 5;
+constexpr float DEPOSITOR_MIN_POSITION = -1000.0f;
+constexpr float DEPOSITOR_MAX_POSITION = 1000.0f;
+constexpr float EXCAVATOR_OUTPUT_MIN = -1.0f;
+constexpr float EXCAVATOR_OUTPUT_MAX = 1.0f;
+constexpr float EXCAVATOR_VELOCITY_MIN = -5000.0f;
+constexpr float EXCAVATOR_VELOCITY_MAX = 5000.0f;
 
 /*
  * Other
@@ -166,6 +191,9 @@ void robot_status_timer_callback(rcl_timer_t * timer, int64_t last_call_time) {
     log_logging(drive_base_left.to_string().c_str());
     update_robot_data_from_Spark_Max(robot_data.right_drivebase, &drive_base_right);
     log_logging(drive_base_right.to_string().c_str());
+    update_robot_data_from_Spark_Max(robot_data.depositor, &depositor_motor);
+    update_robot_data_from_Spark_Max(robot_data.excavator_actuator, &excavator_actuator);
+    update_robot_data_from_Spark_Max(robot_data.excavator_motor, &excavator_motor);
     RCSOFTCHECK(rcl_publish(&robot_data_publisher, &robot_data, NULL));
   }
 }
@@ -185,25 +213,9 @@ void CAN_core_callback(rcl_timer_t * timer, int64_t last_call_time) {
       } else {
         //log_logging("Error Sending Heartbeat...!!!...");
       }
-      drive_base_left.set_control_frame(0.5);
-      //log_logging(CAN_Helper.send_message().c_str());
-      CAN_Helper.send_message();
-
-      //log_logging(CAN_Helper.send_message().c_str());
-      CAN_Helper.send_message();
-      /*
-      uint8_t frame_data[8] = {255, 255, 255, 255, 255, 255, 255, 255};
-      //float val = 0.5;
-      //create_data(frame_data, &val, 4, 5);
-      //frame_data[4] = 0x02;
-
-      uint32_t test_id = 0x2052C80 | 0x0000000B;
-      uint8_t test_dlc = 8;
-      
-      //log_logging(String(test_dlc).c_str());
-      //log_logging(String(test_id).c_str());
-      //log_logging((String(frame_data[0]) + " " + String(frame_data[1]) + " " + String(frame_data[2]) + " " + String(frame_data[3]) + " " + String(frame_data[4])).c_str());
-      CAN0.sendMsgBuf(test_id, test_dlc, frame_data);*/
+      for (uint8_t i = 0; i < CONTROLLED_SPARK_MAX_COUNT; ++i) {
+        CAN_Helper.send_message();
+      }
 
     }
     else{
@@ -283,6 +295,42 @@ void cmd_vel_callback(const void * msgin) {
     //log_logging(cmd_vel_string);
   }
   
+}
+
+/*
+ * Subscription callback function to be called on depositor position updates
+ */
+void depositor_position_callback(const void * msgin) {
+  const std_msgs__msg__Float32 * msg = (const std_msgs__msg__Float32 *)msgin;
+
+  if (msg != NULL) {
+    depositor_position_target = constrain(msg->data, DEPOSITOR_MIN_POSITION, DEPOSITOR_MAX_POSITION);
+    depositor_motor.set_control_frame(control_mode::Position_Set, depositor_position_target);
+  }
+}
+
+/*
+ * Subscription callback function to be called on excavator actuator output updates
+ */
+void excavator_actuator_callback(const void * msgin) {
+  const std_msgs__msg__Float32 * msg = (const std_msgs__msg__Float32 *)msgin;
+
+  if (msg != NULL) {
+    excavator_actuator_output_target = constrain(msg->data, EXCAVATOR_OUTPUT_MIN, EXCAVATOR_OUTPUT_MAX);
+    excavator_actuator.set_control_frame(control_mode::Duty_Cycle_Set, excavator_actuator_output_target);
+  }
+}
+
+/*
+ * Subscription callback function to be called on excavator motor velocity updates
+ */
+void excavator_motor_callback(const void * msgin) {
+  const std_msgs__msg__Float32 * msg = (const std_msgs__msg__Float32 *)msgin;
+
+  if (msg != NULL) {
+    excavator_motor_velocity_target = constrain(msg->data, EXCAVATOR_VELOCITY_MIN, EXCAVATOR_VELOCITY_MAX);
+    excavator_motor.set_control_frame(control_mode::Speed_Set, excavator_motor_velocity_target);
+  }
 }
 
 /*
@@ -390,6 +438,24 @@ void setup_subscribers(){
     ROSIDL_GET_MSG_TYPE_SUPPORT(geometry_msgs, msg, Twist),
     "cmd_vel"));
 
+  RCCHECK(rclc_subscription_init_default(
+    &depositor_position_subscriber,
+    &node,
+    ROSIDL_GET_MSG_TYPE_SUPPORT(std_msgs, msg, Float32),
+    "depositor/position_setpoint"));
+
+  RCCHECK(rclc_subscription_init_default(
+    &excavator_actuator_subscriber,
+    &node,
+    ROSIDL_GET_MSG_TYPE_SUPPORT(std_msgs, msg, Float32),
+    "excavator/actuator_output"));
+
+  RCCHECK(rclc_subscription_init_default(
+    &excavator_motor_subscriber,
+    &node,
+    ROSIDL_GET_MSG_TYPE_SUPPORT(std_msgs, msg, Float32),
+    "excavator/velocity_setpoint"));
+
   // Create a subscriber for the "enabled" topic
   RCCHECK(rclc_subscription_init_default(
     &enabled_subscriber,
@@ -404,11 +470,14 @@ void setup_subscribers(){
 void setup_executor(){
   // Create an executor, set number of handles, and add handles
   // Order added defines execution hierarchy (FIFO)
-  RCCHECK(rclc_executor_init(&executor, &support.context, 5, &allocator));
+  RCCHECK(rclc_executor_init(&executor, &support.context, 8, &allocator));
   RCCHECK(rclc_executor_add_timer(&executor, &CAN_core_timer));
-  RCCHECK(rclc_executor_add_timer(&executor, &robot_status_timer))
+  RCCHECK(rclc_executor_add_timer(&executor, &robot_status_timer));
   RCCHECK(rclc_executor_add_timer(&executor, &read_timer));
   RCCHECK(rclc_executor_add_subscription(&executor, &cmd_vel_subscriber, &cmd_vel, cmd_vel_callback, ON_NEW_DATA)); // or ALWAYS
+  RCCHECK(rclc_executor_add_subscription(&executor, &depositor_position_subscriber, &depositor_position_command, depositor_position_callback, ON_NEW_DATA));
+  RCCHECK(rclc_executor_add_subscription(&executor, &excavator_actuator_subscriber, &excavator_actuator_command, excavator_actuator_callback, ON_NEW_DATA));
+  RCCHECK(rclc_executor_add_subscription(&executor, &excavator_motor_subscriber, &excavator_motor_command, excavator_motor_callback, ON_NEW_DATA));
   RCCHECK(rclc_executor_add_subscription(&executor, &enabled_subscriber, &enabled, enabled_callback, ALWAYS)); // or ALWAYS
 }
 
@@ -433,6 +502,9 @@ void setup_CAN(){
   // CAN DEVICES
   CANCHECK(drive_base_left.initialize_SPARK_MAX(CAN_Helper, CAN0));
   CANCHECK(drive_base_right.initialize_SPARK_MAX(CAN_Helper, CAN0));
+  CANCHECK(depositor_motor.initialize_SPARK_MAX(CAN_Helper, CAN0));
+  CANCHECK(excavator_actuator.initialize_SPARK_MAX(CAN_Helper, CAN0));
+  CANCHECK(excavator_motor.initialize_SPARK_MAX(CAN_Helper, CAN0));
   
 }
 
@@ -446,6 +518,7 @@ void initialize_vars(){
   robot_data.left_drivebase.device_id = 0;
   robot_data.left_drivebase.position = 0.0;
   robot_data.left_drivebase.velocity = 0.0;
+  robot_data.left_drivebase.temperature = 0;
   robot_data.left_drivebase.voltage = 0.0;
   
   robot_data.right_drivebase.applied_output = 0.0;
@@ -453,7 +526,36 @@ void initialize_vars(){
   robot_data.right_drivebase.device_id = 0;
   robot_data.right_drivebase.position = 0.0;
   robot_data.right_drivebase.velocity = 0.0;
+  robot_data.right_drivebase.temperature = 0;
   robot_data.right_drivebase.voltage = 0.0;
+
+  robot_data.depositor.applied_output = 0.0;
+  robot_data.depositor.current = 0.0;
+  robot_data.depositor.device_id = 0;
+  robot_data.depositor.position = 0.0;
+  robot_data.depositor.velocity = 0.0;
+  robot_data.depositor.temperature = 0;
+  robot_data.depositor.voltage = 0.0;
+
+  robot_data.excavator_actuator.applied_output = 0.0;
+  robot_data.excavator_actuator.current = 0.0;
+  robot_data.excavator_actuator.device_id = 0;
+  robot_data.excavator_actuator.position = 0.0;
+  robot_data.excavator_actuator.velocity = 0.0;
+  robot_data.excavator_actuator.temperature = 0;
+  robot_data.excavator_actuator.voltage = 0.0;
+
+  robot_data.excavator_motor.applied_output = 0.0;
+  robot_data.excavator_motor.current = 0.0;
+  robot_data.excavator_motor.device_id = 0;
+  robot_data.excavator_motor.position = 0.0;
+  robot_data.excavator_motor.velocity = 0.0;
+  robot_data.excavator_motor.temperature = 0;
+  robot_data.excavator_motor.voltage = 0.0;
+
+  depositor_position_target = 0.0f;
+  excavator_actuator_output_target = 0.0f;
+  excavator_motor_velocity_target = 0.0f;
 
 
   logger.data.size = 100;
