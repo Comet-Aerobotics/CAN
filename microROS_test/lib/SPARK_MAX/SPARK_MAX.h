@@ -12,6 +12,7 @@
 
 #include <Arduino.h>
 #include <mcp_can.h>
+#include <queue>
 
 #include "Comet_CAN_Common.h"
 #include "CAN_Device_Interface.h"
@@ -70,7 +71,12 @@ public:
         }
     }
 
-    can_frame get_current_frame() const override {
+    can_frame get_current_frame() override {
+        if (!pid_queue.empty()){
+            can_frame frame = pid_queue.front();
+            pid_queue.pop();
+            return frame;
+        }
         return current_control_frame; 
     }
 
@@ -95,17 +101,20 @@ public:
         } else if ((rxId & FRC_dev_id_mask) == status_2) {
           parse_status_frame_2(rxBuf, len);
         }
-        
-        
-        // Add more cases if necessary
     }
 
     uint8_t set_control_frame(const control_mode mode, const float setpoint); // Command SPARK MAX output
-uint8_t set_control_frame(const float setpoint); // Command SPARK MAX output
+    uint8_t set_control_frame(const float setpoint); // Command SPARK MAX output
 
     void update_status_0(float applied_output); // Updates the applied ouput
     void update_status_1(float velocity, float temperature, float voltage, float current); // Updates the Velocity, Temperature, Voltage, and Current
     void update_status_2(float position); // Updates the Position
+
+    void set_kP(const float val, const uint8_t slot = 0);
+    void set_kI(const float val, const uint8_t slot = 0);
+    void set_kD(const float val, const uint8_t slot = 0);
+    void set_kF(const float val, const uint8_t slot = 0);
+    void set_float_parameter(const SPARK_MAX_PID_ID ID, const float val);
 
     SPARK_MAX_status get_status(){
         return status;
@@ -133,15 +142,18 @@ private:
     const uint8_t device_id;
     control_mode current_mode;
     can_frame current_control_frame = empty_frame; // Used to store the most recent control frame
+    std::queue<can_frame> pid_queue;               // Stores PID parameter configuration frames
     bool active = false;
     SPARK_MAX_status status = empty_status;
 
     u_int16_t period0, period1, period2, period3, period4;
 
     /*
-    * Control Frame
+    * Control & Parameter Frames
     */
     static constexpr uint8_t CONTROL_DLC = 8;
+    static constexpr uint8_t PARAM_DLC = 5;
+    static constexpr uint8_t EXT_FLAG = 1;
     static constexpr uint8_t CONTROL_WRITE_SIZE = 4; // Size (bytes) of actual data written into the Data Window
 
     /*

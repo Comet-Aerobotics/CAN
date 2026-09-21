@@ -45,6 +45,28 @@ enum status_frame_id {
 };
 
 /*
+* SPARK MAX parameter IDs for PID tuning
+*/
+enum SPARK_MAX_PID_ID {
+    kP_0 = 13, 
+    kI_0 = 14, 
+    kD_0 = 15, 
+    kF_0 = 16, 
+    kP_1 = 21, 
+    kI_1 = 22, 
+    kD_1 = 23, 
+    kF_1 = 24, 
+    kP_2 = 29, 
+    kI_2 = 30, 
+    kD_2 = 31, 
+    kF_2 = 32, 
+    kP_3 = 37, 
+    kI_3 = 38, 
+    kD_3 = 39, 
+    kF_3 = 40 
+};
+
+/*
 * SPARK MAX control modes
 */
 enum control_mode {

@@ -31,6 +31,7 @@
 #include <mcp_can.h>
 #include <custom_messages/msg/spark_max_message.h>
 #include <custom_messages/msg/robot_status_message.h>
+#include <custom_messages/srv/spark_pid.h>
 #include "Comet_CAN_Helper.h"
 #include "SPARK_MAX.h"
 #include "Comet_CAN_Common.h"
@@ -41,6 +42,7 @@
 void setup_timers();
 void setup_publishers();
 void setup_subscribers();
+void setup_services();
 void setup_executor();
 void initialize_vars();
 void setup_CAN();
@@ -48,6 +50,7 @@ void update_robot_data_from_Spark_Max(SPARK_MAX *spark_max);
 void depositor_position_callback(const void * msgin);
 void excavator_actuator_callback(const void * msgin);
 void excavator_motor_callback(const void * msgin);
+void pid_callback(const void * req, void * res);
 
 // Micro ROS
 
@@ -56,6 +59,10 @@ void excavator_motor_callback(const void * msgin);
  */
 rcl_publisher_t robot_data_publisher;
 custom_messages__msg__RobotStatusMessage robot_data;
+// Services
+rcl_service_t pid_service;
+custom_messages__srv__SparkPID_Response pidRes;
+custom_messages__srv__SparkPID_Request pidReq;
 // Logger
 rcl_publisher_t logging_publisher;
 std_msgs__msg__String logger;
@@ -346,6 +353,20 @@ void enabled_callback(const void * msgin){
 }
 
 /*
+ * Service callback for Spark MAX PID configuration
+ */
+void pid_callback(const void * req, void * res){
+  const custom_messages__srv__SparkPID_Request * req_in = (const custom_messages__srv__SparkPID_Request *) req;
+  custom_messages__srv__SparkPID_Response * res_in = (custom_messages__srv__SparkPID_Response *) res;
+  (void)res_in;
+
+  if (req_in != NULL && req_in->id < MAX_CAN_DEVICES && CAN_Helper.can_devices[req_in->id] != nullptr){
+    SPARK_MAX *m_sMax = static_cast<SPARK_MAX*>(CAN_Helper.can_devices[req_in->id]);
+    m_sMax->set_float_parameter(static_cast<SPARK_MAX_PID_ID>(req_in->type + 8 * req_in->slot), req_in->setpoint);
+  }
+}
+
+/*
  * Setup function to initialize components
  */
 void setup() {
@@ -369,6 +390,7 @@ void setup() {
   setup_timers();
   setup_publishers();
   setup_subscribers();
+  setup_services();
   setup_executor();
   
   initialize_vars();
@@ -465,12 +487,24 @@ void setup_subscribers(){
 }
 
 /*
+ * Setup services for various topics
+ */
+void setup_services(){
+  // Create a service for the Spark PID setter
+  RCCHECK(rclc_service_init_default(
+    &pid_service, 
+    &node, 
+    ROSIDL_GET_SRV_TYPE_SUPPORT(custom_messages, srv, SparkPID),
+    "spark_max/set_pid"));
+}
+
+/*
  * Setup executor with # of handles
  */
 void setup_executor(){
-  // Create an executor, set number of handles, and add handles
+  // Create an executor, set number of handles, and add handles (9 handles total)
   // Order added defines execution hierarchy (FIFO)
-  RCCHECK(rclc_executor_init(&executor, &support.context, 8, &allocator));
+  RCCHECK(rclc_executor_init(&executor, &support.context, 9, &allocator));
   RCCHECK(rclc_executor_add_timer(&executor, &CAN_core_timer));
   RCCHECK(rclc_executor_add_timer(&executor, &robot_status_timer));
   RCCHECK(rclc_executor_add_timer(&executor, &read_timer));
@@ -479,6 +513,7 @@ void setup_executor(){
   RCCHECK(rclc_executor_add_subscription(&executor, &excavator_actuator_subscriber, &excavator_actuator_command, excavator_actuator_callback, ON_NEW_DATA));
   RCCHECK(rclc_executor_add_subscription(&executor, &excavator_motor_subscriber, &excavator_motor_command, excavator_motor_callback, ON_NEW_DATA));
   RCCHECK(rclc_executor_add_subscription(&executor, &enabled_subscriber, &enabled, enabled_callback, ALWAYS)); // or ALWAYS
+  RCCHECK(rclc_executor_add_service(&executor, &pid_service, &pidReq, &pidRes, pid_callback));
 }
 
 /*

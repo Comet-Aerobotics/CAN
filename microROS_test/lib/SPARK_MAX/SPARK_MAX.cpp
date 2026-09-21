@@ -190,3 +190,44 @@ void SPARK_MAX::parse_status_frame_2(uint8_t * data, uint8_t size){
 
   update_status_2(position);
 }
+
+/*********************************************************************************************************
+** Function name:           set_float_parameter
+** Descriptions:            Function to queue an arbitrary float parameter frame
+*********************************************************************************************************/
+void SPARK_MAX::set_float_parameter(const SPARK_MAX_PID_ID ID, const float val){
+  uint32_t arbID = 0x205C000 | (static_cast<uint32_t>(ID) << 6) | device_id;
+  can_frame frame = {arbID, EXT_FLAG, PARAM_DLC, {0}};
+  memcpy(frame.buf, &val, sizeof(val));
+  frame.buf[4] = 0x02; // Type float
+  pid_queue.push(frame);
+}
+
+void SPARK_MAX::set_kP(const float val, const uint8_t slot){
+  static const SPARK_MAX_PID_ID params[4] = {kP_0, kP_1, kP_2, kP_3};
+  if (slot < 4) {
+    set_float_parameter(params[slot], val);
+  }
+}
+
+void SPARK_MAX::set_kI(const float val, const uint8_t slot){
+  static const SPARK_MAX_PID_ID params[4] = {kI_0, kI_1, kI_2, kI_3};
+  if (slot < 4) {
+    set_float_parameter(params[slot], val);
+  }
+}
+
+void SPARK_MAX::set_kD(const float val, const uint8_t slot){
+  static const SPARK_MAX_PID_ID params[4] = {kD_0, kD_1, kD_2, kD_3};
+  if (slot < 4) {
+    set_float_parameter(params[slot], val);
+  }
+}
+
+void SPARK_MAX::set_kF(const float val, const uint8_t slot){
+  static const SPARK_MAX_PID_ID params[4] = {kF_0, kF_1, kF_2, kF_3};
+  if (slot < 4) {
+    set_float_parameter(params[slot], val);
+  }
+}
+
