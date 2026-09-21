@@ -30,6 +30,7 @@ rosdep update || true
 
 echo "[devcontainer] Installing rosdep dependencies for microros_ws (best-effort)"
 cd "$HOME/microros_ws" || true
+sudo apt-get update || true
 rosdep install --from-paths src --ignore-src -y || true
 
 echo "[devcontainer] Setup complete. To finish, open a new terminal (or run 'source ~/.bashrc')."

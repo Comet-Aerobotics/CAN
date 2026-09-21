@@ -18,7 +18,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 # Install python tooling
-RUN python3 -m pip install --no-cache-dir -U pip setuptools \
+RUN python3 -m pip install --no-cache-dir -U pip \
+    && python3 -m pip install --no-cache-dir "setuptools<=58.2.0" \
     && python3 -m pip install --no-cache-dir -U rosdep colcon-common-extensions platformio
 
 # Initialize rosdep (best-effort)
@@ -37,6 +38,11 @@ RUN usermod -a -G dialout $USERNAME || true
 WORKDIR /workspace
 USER $USERNAME
 
-ENV PATH="/home/${USERNAME}/.local/bin:${PATH}"
+# Setup PlatformIO Python virtualenv required by micro_ros_platformio
+RUN mkdir -p /home/${USERNAME}/.platformio \
+    && python3 -m venv /home/${USERNAME}/.platformio/penv \
+    && /home/${USERNAME}/.platformio/penv/bin/pip install --no-cache-dir -U pip "setuptools<=58.2.0" platformio
+
+ENV PATH="/home/${USERNAME}/.platformio/penv/bin:/home/${USERNAME}/.local/bin:${PATH}"
 
 CMD [ "sleep", "infinity" ]
