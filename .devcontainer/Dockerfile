@@ -14,12 +14,16 @@ ENV LC_ALL=C.UTF-8
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential cmake ninja-build git wget ca-certificates curl gnupg lsb-release locales tzdata sudo \
     python3 python3-pip python3-venv python3-dev python3-colcon-common-extensions \
+    python3-numpy \
+    ros-${ROS_DISTRO}-joy \
+    ros-${ROS_DISTRO}-joy-linux \
+    ros-${ROS_DISTRO}-teleop-twist-joy \
     && locale-gen en_US.UTF-8 \
     && rm -rf /var/lib/apt/lists/*
 
 # Install python tooling
 RUN python3 -m pip install --no-cache-dir -U pip \
-    && python3 -m pip install --no-cache-dir "setuptools<=58.2.0" \
+    && python3 -m pip install --no-cache-dir "setuptools<=58.2.0" numpy \
     && python3 -m pip install --no-cache-dir -U rosdep colcon-common-extensions platformio
 
 # Initialize rosdep (best-effort)
