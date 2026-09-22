@@ -44,8 +44,8 @@ USER $USERNAME
 
 # Setup PlatformIO Python virtualenv required by micro_ros_platformio
 RUN mkdir -p /home/${USERNAME}/.platformio \
-    && python3 -m venv /home/${USERNAME}/.platformio/penv \
-    && /home/${USERNAME}/.platformio/penv/bin/pip install --no-cache-dir -U pip "setuptools<=58.2.0" platformio
+    && python3 -m venv --system-site-packages /home/${USERNAME}/.platformio/penv \
+    && /home/${USERNAME}/.platformio/penv/bin/pip install --no-cache-dir -U pip "setuptools<=58.2.0" platformio numpy
 
 ENV PATH="/home/${USERNAME}/.platformio/penv/bin:/home/${USERNAME}/.local/bin:${PATH}"
 
