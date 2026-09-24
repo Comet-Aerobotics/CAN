@@ -21,6 +21,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && locale-gen en_US.UTF-8 \
     && rm -rf /var/lib/apt/lists/*
 
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ros-${ROS_DISTRO}-foxglove-bridge \
+    ros-${ROS_DISTRO}-rtabmap-ros \
+    ros-${ROS_DISTRO}-rtabmap-launch \
+    && rm -rf /var/lib/apt/lists/*
+
 # Install python tooling
 RUN python3 -m pip install --no-cache-dir -U pip \
     && python3 -m pip install --no-cache-dir "setuptools<=58.2.0" numpy \

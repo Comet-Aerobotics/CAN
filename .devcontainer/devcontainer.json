@@ -35,5 +35,14 @@
   "containerEnv": {
     "ROS_DISTRO": "humble",
     "DEBIAN_FRONTEND": "noninteractive"
+  },
+  "forwardPorts": [
+    8765
+  ],
+  "portsAttributes": {
+    "8765": {
+      "label": "Foxglove Bridge",
+      "onAutoForward": "silent"
+    }
   }
 }
