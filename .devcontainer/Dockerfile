@@ -15,6 +15,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential cmake ninja-build git wget ca-certificates curl gnupg lsb-release locales tzdata sudo \
     python3 python3-pip python3-venv python3-dev python3-colcon-common-extensions \
     python3-numpy \
+    x11-apps mesa-utils \
     ros-${ROS_DISTRO}-joy \
     ros-${ROS_DISTRO}-joy-linux \
     ros-${ROS_DISTRO}-teleop-twist-joy \
