@@ -10,6 +10,9 @@
       "USER_GID": "1000"
     }
   },
+  "features": {
+    "ghcr.io/anthropics/devcontainer-features/claude-code:1": {}
+  },
   "customizations": {
     "vscode": {
       "extensions": [
@@ -18,12 +21,16 @@
         "ms-vscode.cmake-tools",
         "platformio.platformio-ide",
         "ms-vscode.remote-repositories",
-        "ms-vscode-remote.remote-containers"
+        "ms-vscode-remote.remote-containers",
+        "anthropic.claude-code"
       ]
     }
   },
   "workspaceFolder": "/workspace",
   "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached",
+  "mounts": [
+    "source=claude-config-${devcontainerId},target=/home/vscode/.claude,type=volume"
+  ],
   "postCreateCommand": "bash .devcontainer/postCreate.sh",
   "remoteUser": "vscode",
   "runArgs": [
@@ -39,7 +46,8 @@
     "ROS_DISTRO": "humble",
     "DEBIAN_FRONTEND": "noninteractive",
     "DISPLAY": "${localEnv:DISPLAY:host.docker.internal:0}",
-    "LIBGL_ALWAYS_SOFTWARE": "1"
+    "LIBGL_ALWAYS_SOFTWARE": "1",
+    "CLAUDE_CONFIG_DIR": "/home/vscode/.claude"
   },
   "forwardPorts": [
     8765

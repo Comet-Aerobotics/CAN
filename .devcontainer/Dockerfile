@@ -26,6 +26,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ros-${ROS_DISTRO}-foxglove-bridge \
     ros-${ROS_DISTRO}-rtabmap-ros \
     ros-${ROS_DISTRO}-rtabmap-launch \
+    ros-${ROS_DISTRO}-depthai-ros-driver \
+    ros-${ROS_DISTRO}-image-proc \
+    ros-${ROS_DISTRO}-imu-filter-madgwick \
     && rm -rf /var/lib/apt/lists/*
 
 # Install python tooling
@@ -48,6 +51,9 @@ RUN usermod -a -G dialout $USERNAME || true
 
 WORKDIR /workspace
 USER $USERNAME
+
+# Abdullah claude code lol
+RUN mkdir -p /home/vscode/.claude && chown -R vscode:vscode /home/vscode/.claude
 
 # Setup PlatformIO Python virtualenv required by micro_ros_platformio
 RUN mkdir -p /home/${USERNAME}/.platformio \

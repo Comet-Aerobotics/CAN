@@ -1,0 +1,56 @@
+rosbag2_bagfile_information:
+  version: 5
+  storage_identifier: sqlite3
+  duration:
+    nanoseconds: 30428861394
+  starting_time:
+    nanoseconds_since_epoch: 1305031098382263450
+  message_count: 22592
+  topics_with_message_count:
+    - topic_metadata:
+        name: /camera/rgb/image_color
+        type: sensor_msgs/msg/Image
+        serialization_format: cdr
+        offered_qos_profiles: ""
+      message_count: 798
+    - topic_metadata:
+        name: /camera/rgb/camera_info
+        type: sensor_msgs/msg/CameraInfo
+        serialization_format: cdr
+        offered_qos_profiles: ""
+      message_count: 798
+    - topic_metadata:
+        name: /camera/depth/image
+        type: sensor_msgs/msg/Image
+        serialization_format: cdr
+        offered_qos_profiles: ""
+      message_count: 798
+    - topic_metadata:
+        name: /camera/depth/camera_info
+        type: sensor_msgs/msg/CameraInfo
+        serialization_format: cdr
+        offered_qos_profiles: ""
+      message_count: 798
+    - topic_metadata:
+        name: /tf
+        type: tf2_msgs/msg/TFMessage
+        serialization_format: cdr
+        offered_qos_profiles: ""
+      message_count: 4242
+    - topic_metadata:
+        name: /imu
+        type: sensor_msgs/msg/Imu
+        serialization_format: cdr
+        offered_qos_profiles: ""
+      message_count: 15158
+  compression_format: ""
+  compression_mode: ""
+  relative_file_paths:
+    - fr1_xyz_fixed_0.db3
+  files:
+    - path: fr1_xyz_fixed_0.db3
+      starting_time:
+        nanoseconds_since_epoch: 1305031098382263450
+      duration:
+        nanoseconds: 30428861394
+      message_count: 22592

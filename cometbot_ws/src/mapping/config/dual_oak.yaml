@@ -1,0 +1,31 @@
+# depthai_ros_driver parameters for the front and back OAK-D Pro.
+# Loaded with substitutions enabled: the i_mx_id values below are filled in
+# from the front_mxid / back_mxid launch arguments.
+/oak_front:
+  ros__parameters:
+    camera:
+      i_mx_id: "$(var front_mxid)"
+      i_pipeline_type: RGBD
+      i_nn_type: none
+      i_enable_imu: true
+      i_enable_ir: true
+      i_laser_dot_brightness: 800
+      i_floodlight_brightness: 0
+    stereo:
+      i_align_depth: true
+      i_subpixel: true
+
+/oak_back:
+  ros__parameters:
+    camera:
+      i_mx_id: "$(var back_mxid)"
+      i_pipeline_type: RGBD
+      i_nn_type: none
+      # One IMU is enough; the front camera's feeds odometry.
+      i_enable_imu: false
+      i_enable_ir: true
+      i_laser_dot_brightness: 800
+      i_floodlight_brightness: 0
+    stereo:
+      i_align_depth: true
+      i_subpixel: true

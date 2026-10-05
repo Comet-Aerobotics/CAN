@@ -30,3 +30,6 @@ __pycache__/
 *.swp
 *~
 .DS_Store
+# Large rosbag / dataset files (GitHub rejects files over 100 MB)
+*.db3
+*.bag
