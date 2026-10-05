@@ -13,6 +13,9 @@ if [ -f "$HOME/microros_ws/install/local_setup.bash" ]; then
 fi
 EOT
 fi
+if ! grep -q "rosbag_test/bag_aliases.sh" "$HOME/.bashrc"; then
+  echo "source /workspace/cometbot_ws/src/mapping/rosbag_test/bag_aliases.sh" >> "$HOME/.bashrc"
+fi
 
 # Create microros_ws and clone micro_ros_setup if not present
 if [ ! -d "$HOME/microros_ws/src/micro_ros_setup" ]; then
