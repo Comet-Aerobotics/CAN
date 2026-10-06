@@ -8,12 +8,12 @@ rosbag2_bagfile_information:
   - duration:
       nanoseconds: 30428861394
     message_count: 25626
-    path: fr1_xyz.db3
+    path: fr1_xyz_v5.db3
     starting_time:
       nanoseconds_since_epoch: 1305031098382263450
   message_count: 25626
   relative_file_paths:
-  - fr1_xyz.db3
+  - fr1_xyz_v5.db3
   ros_distro: rosbags
   starting_time:
     nanoseconds_since_epoch: 1305031098382263450
@@ -22,7 +22,7 @@ rosbag2_bagfile_information:
   - message_count: 15158
     topic_metadata:
       name: /imu
-      offered_qos_profiles: []
+      offered_qos_profiles: ''
       serialization_format: cdr
       type: sensor_msgs/msg/Imu
       type_description_hash: 
@@ -30,7 +30,7 @@ rosbag2_bagfile_information:
   - message_count: 3034
     topic_metadata:
       name: /cortex_marker_array
-      offered_qos_profiles: []
+      offered_qos_profiles: ''
       serialization_format: cdr
       type: visualization_msgs/msg/MarkerArray
       type_description_hash: 
@@ -38,7 +38,7 @@ rosbag2_bagfile_information:
   - message_count: 4242
     topic_metadata:
       name: /tf
-      offered_qos_profiles: []
+      offered_qos_profiles: ''
       serialization_format: cdr
       type: tf2_msgs/msg/TFMessage
       type_description_hash: 
@@ -46,7 +46,7 @@ rosbag2_bagfile_information:
   - message_count: 798
     topic_metadata:
       name: /camera/depth/camera_info
-      offered_qos_profiles: []
+      offered_qos_profiles: ''
       serialization_format: cdr
       type: sensor_msgs/msg/CameraInfo
       type_description_hash: 
@@ -54,7 +54,7 @@ rosbag2_bagfile_information:
   - message_count: 798
     topic_metadata:
       name: /camera/depth/image
-      offered_qos_profiles: []
+      offered_qos_profiles: ''
       serialization_format: cdr
       type: sensor_msgs/msg/Image
       type_description_hash: 
@@ -62,7 +62,7 @@ rosbag2_bagfile_information:
   - message_count: 798
     topic_metadata:
       name: /camera/rgb/camera_info
-      offered_qos_profiles: []
+      offered_qos_profiles: ''
       serialization_format: cdr
       type: sensor_msgs/msg/CameraInfo
       type_description_hash: 
@@ -70,9 +70,9 @@ rosbag2_bagfile_information:
   - message_count: 798
     topic_metadata:
       name: /camera/rgb/image_color
-      offered_qos_profiles: []
+      offered_qos_profiles: ''
       serialization_format: cdr
       type: sensor_msgs/msg/Image
       type_description_hash: 
         RIHS01_d31d41a9a4c4bc8eae9be757b0beed306564f7526c88ea6a4588fb9582527d47
-  version: 9
+  version: 5
