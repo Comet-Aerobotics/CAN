@@ -37,9 +37,9 @@
     "--ipc=host",
     "-v",
     "/tmp/.X11-unix:/tmp/.X11-unix:rw",
-    "--device=/dev/ttyUSB0:/dev/ttyUSB0",
-    "--device=/dev/ttyACM0:/dev/ttyACM0",
-    "--device=/dev/bus/usb:/dev/bus/usb",
+    "-v",
+    "/dev/bus/usb:/dev/bus/usb",
+    "--device-cgroup-rule=c 189:* rmw",
     "--privileged"
   ],
   "containerEnv": {
@@ -50,10 +50,10 @@
     "CLAUDE_CONFIG_DIR": "/home/vscode/.claude"
   },
   "forwardPorts": [
-    8765
+    8080
   ],
   "portsAttributes": {
-    "8765": {
+    "8080": {
       "label": "Foxglove Bridge",
       "onAutoForward": "silent"
     }

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Start RTAB-Map SLAM with the front and back OAK-D Pro cameras, plus the
-# Foxglove bridge (connect Foxglove to ws://localhost:8765).
+# Foxglove bridge (connect Foxglove to ws://localhost:8080).
 #
 # Usage:
 #   FRONT_MXID=<id> BACK_MXID=<id> ./run_dual_oak_rtabmap.sh [launch_arg:=value ...]
@@ -9,6 +9,7 @@
 #   ./run_dual_oak_rtabmap.sh front_x:=0.35 back_x:=-0.35
 #   ./run_dual_oak_rtabmap.sh localization:=true     # reuse the saved map
 #   ./run_dual_oak_rtabmap.sh use_imu:=false
+#   ./run_dual_oak_rtabmap.sh nav2:=true           # also run Nav2 (goals on /goal_pose)
 #
 # Finding the MXIDs: run once with one camera plugged in and look for
 #   "Camera with MXID: <id> and Name: ... connected!"
@@ -26,7 +27,7 @@ if [ -f "$WS_SETUP" ]; then
 fi
 
 missing=()
-for pkg in depthai_ros_driver image_proc rtabmap_slam rtabmap_odom rtabmap_sync imu_filter_madgwick foxglove_bridge; do
+for pkg in depthai_ros_driver image_proc rtabmap_slam rtabmap_odom rtabmap_sync rtabmap_util imu_filter_madgwick foxglove_bridge nav2_bringup; do
   ros2 pkg prefix "$pkg" >/dev/null 2>&1 || missing+=("ros-${ROS_DISTRO}-${pkg//_/-}")
 done
 if [ ${#missing[@]} -gt 0 ]; then

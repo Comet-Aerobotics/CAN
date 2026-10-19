@@ -7,8 +7,14 @@ Pipeline:
   imu_filter_madgwick turns the front camera's raw IMU into /imu/data.
   foxglove_bridge serves everything on ws://localhost:<foxglove_port>.
 
+With nav2:=true, Nav2 (config/nav2_params.yaml) plans on /rtabmap/map and
+avoids obstacles seen by each camera:
+  depth -> point_cloud_xyz -> obstacles_detection -> /<cam>/obstacles, /<cam>/ground
+  Send goals by publishing a PoseStamped to /goal_pose (e.g. Foxglove's
+  Publish panel or the 3D panel's pose tool); Nav2 drives /cmd_vel.
+
 Run through run_dual_oak_rtabmap.sh, or directly:
-  ros2 launch dual_oak_rtabmap.launch.py front_mxid:=<id> back_mxid:=<id>
+  ros2 launch dual_oak_rtabmap.launch.py front_mxid:=<id> back_mxid:=<id> [nav2:=true]
 """
 
 import os
@@ -60,10 +66,57 @@ def rgbd_sync(name):
     )
 
 
+def obstacle_detection(name, detection_params):
+    """Split one camera's depth into ground/obstacle clouds for the local costmap."""
+    return [
+        Node(
+            package='rtabmap_util', executable='point_cloud_xyz', name='point_cloud_xyz',
+            namespace=name, output='screen',
+            parameters=[{'decimation': 4, 'max_depth': 4.0, 'voxel_size': 0.05,
+                         'approx_sync': True}],
+            remappings=[
+                ('depth/image', f'/{name}/stereo/image_raw'),
+                ('depth/camera_info', f'/{name}/rgb/camera_info'),
+                ('cloud', f'/{name}/cloud'),
+            ],
+        ),
+        Node(
+            package='rtabmap_util', executable='obstacles_detection',
+            name='obstacles_detection', namespace=name, output='screen',
+            parameters=[detection_params],
+            remappings=[
+                ('cloud', f'/{name}/cloud'),
+                ('obstacles', f'/{name}/obstacles'),
+                ('ground', f'/{name}/ground'),
+            ],
+        ),
+    ]
+
+
+def navigation(params_file):
+    nav2_launch = os.path.join(
+        get_package_share_directory('nav2_bringup'), 'launch', 'navigation_launch.py')
+    # Set every argument: the depthai includes leak launch configurations
+    # (e.g. use_composition:=true, which Nav2 evaluates as Python and fails).
+    return IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(nav2_launch),
+        launch_arguments={
+            'params_file': params_file,
+            'namespace': '',
+            'use_sim_time': 'False',
+            'autostart': 'True',
+            'use_composition': 'False',
+            'use_respawn': 'False',
+            'log_level': 'info',
+        }.items(),
+    )
+
+
 def launch_setup(context):
     use_imu = LaunchConfiguration('use_imu').perform(context) == 'true'
     localization = LaunchConfiguration('localization').perform(context) == 'true'
     fresh_map = LaunchConfiguration('fresh_map').perform(context) == 'true'
+    nav2 = LaunchConfiguration('nav2').perform(context) == 'true'
 
     # The apt build of rtabmap has no OpenGV, so multi-camera registration
     # must be 3D->3D (Vis/EstimationType 0) instead of PnP.
@@ -74,7 +127,14 @@ def launch_setup(context):
     }
     imu_remap = [('imu', '/imu/data')] if use_imu else []
 
-    slam_params = dict(common, **{
+    # Shared by rtabmap's map and the Nav2 obstacle clouds, so both agree on
+    # what counts as ground.
+    grid_heights = {
+        'Grid/MaxGroundHeight': '0.05',
+        'Grid/MaxObstacleHeight': '1.0',
+    }
+
+    slam_params = dict(common, **grid_heights, **{
         'subscribe_sensor_data': True,
         'subscribe_odom_info': True,
         'approx_sync': False,
@@ -84,8 +144,6 @@ def launch_setup(context):
         'Grid/3D': 'false',
         'Grid/RayTracing': 'true',
         'Grid/RangeMax': '4.0',
-        'Grid/MaxGroundHeight': '0.05',
-        'Grid/MaxObstacleHeight': '1.0',
     })
 
     actions = [
@@ -145,6 +203,14 @@ def launch_setup(context):
             remappings=[('imu/data_raw', '/oak_front/imu/data'), ('imu/data', '/imu/data')],
         ))
 
+    if nav2:
+        for name in CAMERAS:
+            actions += obstacle_detection(name, dict(grid_heights, **{
+                'frame_id': 'base_link',
+                'Grid/NormalsSegmentation': 'false',  # height threshold only
+            }))
+        actions.append(navigation(LaunchConfiguration('nav2_params_file').perform(context)))
+
     return actions
 
 
@@ -176,6 +242,10 @@ def generate_launch_description():
                               description='Delete the database on start (mapping mode only)'),
         DeclareLaunchArgument('database_path',
                               default_value=os.path.expanduser('~/.ros/rtabmap_dual_oak.db')),
-        DeclareLaunchArgument('foxglove_port', default_value='8765'),
+        DeclareLaunchArgument('foxglove_port', default_value='8080'),
+        DeclareLaunchArgument('nav2', default_value='false',
+                              description='Run Nav2 on the RTAB-Map map'),
+        DeclareLaunchArgument('nav2_params_file',
+                              default_value=os.path.join(HERE, 'config', 'nav2_params.yaml')),
     ]
     return LaunchDescription(args + [OpaqueFunction(function=launch_setup)])

@@ -29,6 +29,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ros-${ROS_DISTRO}-depthai-ros-driver \
     ros-${ROS_DISTRO}-image-proc \
     ros-${ROS_DISTRO}-imu-filter-madgwick \
+    ros-${ROS_DISTRO}-navigation2 \
+    ros-${ROS_DISTRO}-nav2-bringup \
     && rm -rf /var/lib/apt/lists/*
 
 # Install python tooling
