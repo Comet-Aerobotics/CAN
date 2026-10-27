@@ -19,6 +19,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ros-${ROS_DISTRO}-joy \
     ros-${ROS_DISTRO}-joy-linux \
     ros-${ROS_DISTRO}-teleop-twist-joy \
+    iproute2 can-utils kmod \
     && locale-gen en_US.UTF-8 \
     && rm -rf /var/lib/apt/lists/*
 
