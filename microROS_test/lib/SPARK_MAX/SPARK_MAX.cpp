@@ -1,5 +1,7 @@
 #include "SPARK_MAX.h"
 #include <Comet_CAN_Helper.h>
+#include <iostream>
+#include <cmath>
 
 /*********************************************************************************************************
 ** Function name:           set_control_frame
@@ -95,7 +97,23 @@ void SPARK_MAX::update_status_2(float position){
 *********************************************************************************************************/
 uint8_t SPARK_MAX::set_status_frame_period(const status_frame_id frame, const uint16_t period, MCP_CAN &CAN0){
   // Delay to ensure there is an available transmit buffer
-  delay(50);
+  std::this_thread::sleep_for(std::chrono::milliseconds(10));   // was delay(50)
+
+  struct ::can_frame msg;
+  std::memset(&msg, 0, sizeof(msg));
+  msg.can_id = (device_id + frame) | CAN_EFF_FLAG;   // CAN_EFF_FLAG = "extended ID" (was CAN_EXTID)
+  msg.can_dlc = STATUS_DLC;                          // 2 bytes
+  msg.data[0] = period & 0xFF;                       // low byte first
+  msg.data[1] = (period >> 8) & 0xFF;
+
+  if (write(can_socket, &msg, sizeof(msg)) == sizeof(msg)) {
+    return CAN_OK;
+  }
+  return CAN_FAIL;
+
+
+  //*************************************************OLD****************************************************** */
+  /* delay(50);
   uint8_t frame_data[STATUS_DLC];
   create_data(frame_data, &period, STATUS_WRITE_SIZE, STATUS_DLC);
   if(CAN0.sendMsgBuf(device_id + frame, CAN_EXTID, STATUS_DLC, frame_data) == CAN_OK){
@@ -103,7 +121,7 @@ uint8_t SPARK_MAX::set_status_frame_period(const status_frame_id frame, const ui
   } 
   else {
     return CAN_FAIL;
-  }
+  } */
 }
 
 /*********************************************************************************************************
@@ -135,7 +153,7 @@ float SPARK_MAX::data_to_float_32_bit(uint8_t * data, uint8_t size){
     return result;
   }
   else{
-    Serial.println("FAILED TO CONVERT TO FLOAT");
+    std::cerr << "FAILED TO CONVERT TO FLOAT";
     return NAN;
   }
 }
@@ -158,6 +176,8 @@ void SPARK_MAX::parse_volt_and_amp(float * voltage, float * current, uint8_t *da
 *********************************************************************************************************/
 void SPARK_MAX::parse_status_frame_0(uint8_t * data){
   float applied_output = ((static_cast<int>(data[1]) << 8) | data[0]) / 32764.0; // Range = [-1, 1]
+  int16_t raw = (static_cast<int16_t>(data[0]) | (static_cast<int16_t>(data[1]) << 8));
+  float applied_output = raw / 32764.0f; 
 
   // Check to see if send backwards (idk why this happens)
   if (abs(applied_output) > 1){

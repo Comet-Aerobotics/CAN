@@ -35,6 +35,7 @@
   "remoteUser": "vscode",
   "runArgs": [
     "--ipc=host",
+    "--network=host",
     "-v",
     "/tmp/.X11-unix:/tmp/.X11-unix:rw",
     "-v",

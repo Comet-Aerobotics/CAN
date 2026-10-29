@@ -16,7 +16,15 @@
 ---- Change CAN device interface to include a get_is_enabled function so that if it is not being used the CAN core can skip it
 */
 
-#include <Arduino.h>
+//#include <Arduino.h>
+#include <iostream>
+#include <cstring>
+#include <unistd.h>
+#include <net/if.h>
+#include <sys/ioctl.h>
+#include <sys/socket.h>
+#include <linux/can.h>
+#include <linux/can/raw.h>
 #include <micro_ros_platformio.h>
 #include <stdio.h>
 #include <rcl/rcl.h>

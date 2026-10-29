@@ -10,12 +10,17 @@
 #ifndef SPARK_MAX_H
 #define SPARK_MAX_H
 
-#include <Arduino.h>
-#include <mcp_can.h>
+#include <cstdint> // we gotta change this stuff to socketcan/esp32
+#include <string> // also this. how???? 10/26 update: i think i did it
 
 #include "Comet_CAN_Common.h"
 #include "CAN_Device_Interface.h"
 #include "Comet_CAN_Helper.h"
+
+#ifndef CAN_OK  //define these since we are not using the mcp_can library in this code
+#define CAN_OK   0
+#define CAN_FAIL 0xFF
+
 
 /*********************************************************************************************************
 ** SPARK_MAX class
@@ -29,7 +34,7 @@ public:
     SPARK_MAX(uint8_t device_id) : device_id(device_id){
     }
 
-    byte initialize_SPARK_MAX(Comet_CAN_Helper &CAN_Helper,  MCP_CAN &CAN0, const uint16_t period0 = 100, const uint16_t period1 = 100, 
+    uint8_t /*changed from byte*/ initialize_SPARK_MAX(Comet_CAN_Helper &CAN_Helper,  int can_socket /*changed from MCP_CAN &CAN0*/, const uint16_t period0 = 100, const uint16_t period1 = 100, 
                 const uint16_t period2 = 100, const uint16_t period3 = 1000, const uint16_t period4 = 1000 ){
 
         this->period0 = period0;
@@ -45,7 +50,7 @@ public:
         active = true;
 
         if (CAN_Helper.add_to_CAN_dev_arr(this) == CAN_OK){
-            set_all_status_frame_periods(CAN0, period0, period1, period2, period3, period4);
+            set_all_status_frame_periods(can_socket, period0, period1, period2, period3, period4); //changed to can_socket from CAN0
             return CAN_OK;
         }
         else{
@@ -112,13 +117,14 @@ uint8_t set_control_frame(const float setpoint); // Command SPARK MAX output
     }
 
     String to_string(){
-        return "Device id: " + String(get_device_id()) + 
-                "\nApplied output: " + String(status.applied_output) +
-                "Velocity: " + String(status.velocity) +
-                "Temperature: " + String(status.temperature) +
-                "Voltage: " + String(status.voltage) +
-                "Current: " + String(status.current) +
-                "Position: " + String(status.position);
+        return "Device id: " + to_string(get_device_id()) + 
+                "\nApplied output: " + to_string(status.applied_output) +
+                "\nVelocity: " + to_string(status.velocity) +
+                "\nTemperature: " + to_string(status.temperature) +
+                "\nVoltage: " + to_string(status.voltage) +
+                "\nCurrent: " + to_string(status.current) +
+                "\nPosition: " + to_string(status.position);
+        //changed all String to to_string since we are not using Arduino anymore
     }
 
 
@@ -150,9 +156,9 @@ private:
     static constexpr uint8_t STATUS_DLC = 2;
     static constexpr uint8_t STATUS_WRITE_SIZE = 2; // Size (bytes) of actual data written into the Data Window
 
-    uint8_t set_status_frame_period(const status_frame_id frame, const uint16_t period, MCP_CAN &CAN0); // Set period for SPARK MAX status frames
+    uint8_t set_status_frame_period(const status_frame_id frame, const uint16_t period, int can_socket); // Set period for SPARK MAX status frames | 10/26: changed from MCP_CAN &CAN0 to int can_socket
 
-    void set_all_status_frame_periods(MCP_CAN &CAN0, u_int16_t period0, u_int16_t period1, u_int16_t period2, u_int16_t period3, u_int16_t period4);
+    void set_all_status_frame_periods(int can_socket, u_int16_t period0, u_int16_t period1, u_int16_t period2, u_int16_t period3, u_int16_t period4); //10/26: changed from MCP_CAN &CAN0 to int can_socket
 
     float data_to_float_32_bit(uint8_t *data, uint8_t size); // Converts four bytes (little-endian) to a IEEE floating point number
     void parse_volt_and_amp(float * voltage, float * current, uint8_t *data); // Converts 12 bits (little-endian) to a floating point number
